@@ -329,6 +329,10 @@
     <span class="nav-icon">📸</span>
     <span class="nav-label">Fotos</span>
   </div>
+  <div class="nav-btn" onclick="showPanel('diaadia')">
+    <span class="nav-icon">☀️</span>
+    <span class="nav-label">Dia a Dia</span>
+  </div>
 </nav>
 
 <main>
@@ -492,6 +496,47 @@
         <button onclick="deleteFoto()" style="position:absolute;bottom:-40px;right:0;background:var(--red);color:white;border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;">🗑 Apagar</button>
       </div>
     </div>
+  </div>
+
+
+  <!-- DIA A DIA -->
+  <div class="panel" id="panel-diaadia">
+    <div class="welcome">
+      <div class="welcome-tag">Dia a Dia</div>
+      <div class="welcome-name" id="diaadia-date">—</div>
+      <div class="welcome-role">Higienópolis Tower · Rua Dr. Gabriel dos Santos, 67</div>
+    </div>
+
+    <!-- Checklist diário -->
+    <div class="sec-head">
+      <div class="sec-title">✅ Checklist do Dia</div>
+      <button class="btn btn-ghost btn-sm" onclick="resetChecklist()">Resetar</button>
+    </div>
+    <div id="diaadia-checklist" style="display:flex;flex-direction:column;gap:10px;margin-bottom:4px;"></div>
+
+    <div class="divider"></div>
+
+    <!-- Esta semana -->
+    <div class="sec-head">
+      <div class="sec-title">📅 Esta semana</div>
+    </div>
+    <div id="diaadia-semana"></div>
+
+    <div class="divider"></div>
+
+    <!-- Pagamentos próximos 30 dias -->
+    <div class="sec-head">
+      <div class="sec-title">💰 Pagamentos — próximos 30 dias</div>
+    </div>
+    <div id="diaadia-pagamentos"></div>
+
+    <div class="divider"></div>
+
+    <!-- Contatos rápidos -->
+    <div class="sec-head">
+      <div class="sec-title">📞 Contatos rápidos</div>
+    </div>
+    <div id="diaadia-contatos" style="display:flex;flex-direction:column;gap:10px;"></div>
   </div>
 
 </main>
@@ -677,9 +722,13 @@ document.querySelectorAll('.modal-overlay').forEach(el => el.addEventListener('c
 // ── NAV ───────────────────────────────────────────────────────────────────────
 function showPanel(name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(t => t.classList.remove('active'));
   document.getElementById('panel-' + name).classList.add('active');
-  if(event && event.target) event.target.classList.add('active');
+  if(event && event.target) {
+    const btn = event.target.closest('.nav-btn');
+    if (btn) btn.classList.add('active');
+  }
+  if (name === 'diaadia') renderDiaADia();
 }
 function showPanelByName(name) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -845,6 +894,150 @@ function renderWhatsApp() {
   `).join('');
 }
 
+// ── DIA A DIA ─────────────────────────────────────────────────────────────────
+const CHECKLIST_ITEMS = [
+  "Verificar comunicados na portaria",
+  "Confirmar presença de funcionários",
+  "Checar elevadores (chamados abertos?)",
+  "Verificar área comum / piscina",
+  "Responder mensagens de condôminos",
+  "Conferir caixa de e-mail do condomínio",
+  "Verificar câmeras / segurança",
+];
+
+function getChecklistKey() {
+  const d = new Date();
+  return 'hgt_checklist_' + d.toISOString().slice(0,10);
+}
+
+function loadChecklist() {
+  try { return JSON.parse(localStorage.getItem(getChecklistKey()) || '[]'); } catch(e) { return []; }
+}
+
+function saveChecklist(done) {
+  try { localStorage.setItem(getChecklistKey(), JSON.stringify(done)); } catch(e) {}
+}
+
+function resetChecklist() {
+  saveChecklist([]);
+  renderDiaADia();
+  toast('✅ Checklist resetado para hoje!');
+}
+
+function toggleCheck(idx) {
+  let done = loadChecklist();
+  const pos = done.indexOf(idx);
+  if (pos >= 0) done.splice(pos, 1); else done.push(idx);
+  saveChecklist(done);
+  renderDiaADia();
+}
+
+function renderDiaADia() {
+  // Date header
+  const now = new Date();
+  const dd = document.getElementById('diaadia-date');
+  if (dd) dd.textContent = now.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+
+  // Checklist
+  const done = loadChecklist();
+  const cl = document.getElementById('diaadia-checklist');
+  if (cl) {
+    const total = CHECKLIST_ITEMS.length;
+    const doneCount = done.length;
+    cl.innerHTML = `
+      <div style="background:white;border:1px solid var(--border);border-radius:12px;padding:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div style="font-size:13px;color:var(--text-muted);font-weight:600;">${doneCount}/${total} concluídos</div>
+          <div style="background:var(--cream);border-radius:8px;height:8px;flex:1;margin:0 12px;overflow:hidden;">
+            <div style="background:var(--gold);height:100%;width:${Math.round(doneCount/total*100)}%;border-radius:8px;transition:width 0.4s;"></div>
+          </div>
+        </div>
+        ${CHECKLIST_ITEMS.map((item, i) => {
+          const checked = done.includes(i);
+          return `<div onclick="toggleCheck(${i})" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-light,#eee);cursor:pointer;${i===CHECKLIST_ITEMS.length-1?'border-bottom:none;':''}">
+            <div style="width:22px;height:22px;border-radius:6px;border:2px solid ${checked?'var(--gold)':'var(--border)'};background:${checked?'var(--gold)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;">
+              ${checked?'<svg width="12" height="10" viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg>':''}
+            </div>
+            <span style="font-size:14px;${checked?'text-decoration:line-through;color:var(--text-muted);':''}">${item}</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  // Esta semana
+  const semana = document.getElementById('diaadia-semana');
+  if (semana) {
+    const items = [
+      ...DATA.agenda.filter(a => !a.concluido && daysUntil(a.data) >= 0 && daysUntil(a.data) <= 7),
+      ...DATA.financeiro.filter(f => f.status !== 'Pago' && daysUntil(f.data) >= 0 && daysUntil(f.data) <= 7),
+    ].sort((a,b) => new Date(a.data||a.data) - new Date(b.data||b.data));
+    semana.innerHTML = items.length ? items.map(item => {
+      const d = daysUntil(item.data);
+      const label = d === 0 ? 'Hoje' : d === 1 ? 'Amanhã' : `em ${d} dias`;
+      const cor = d === 0 ? 'var(--red)' : d <= 2 ? '#e08020' : 'var(--navy)';
+      return `<div style="background:white;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;">
+        <div style="min-width:56px;text-align:center;background:${cor}15;border-radius:8px;padding:6px 4px;">
+          <div style="font-size:11px;font-weight:700;color:${cor};text-transform:uppercase;">${fmtDate(item.data).slice(0,5)}</div>
+          <div style="font-size:10px;color:${cor};font-weight:600;">${label}</div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;">${item.titulo || item.desc}</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${item.tipo || item.fav || ''}</div>
+        </div>
+        ${item.prioridade ? priorityTag(item.prioridade) : fmtMoney(item.valor)}
+      </div>`;
+    }).join('') : '<div class="empty"><div class="empty-icon">🎉</div>Nenhum compromisso para esta semana!</div>';
+  }
+
+  // Pagamentos próximos 30 dias
+  const pags = document.getElementById('diaadia-pagamentos');
+  if (pags) {
+    const itens = DATA.financeiro
+      .filter(f => f.status !== 'Pago' && daysUntil(f.data) >= 0 && daysUntil(f.data) <= 30)
+      .sort((a,b) => new Date(a.data) - new Date(b.data));
+    pags.innerHTML = itens.length ? `
+      <div style="background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+        ${itens.map(f => {
+          const d = daysUntil(f.data);
+          const urgente = d <= 3;
+          return `<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border-light,#eee);">
+            <div style="font-size:20px;">${urgente?'🔴':'💳'}</div>
+            <div style="flex:1;">
+              <div style="font-weight:600;font-size:14px;">${f.desc}</div>
+              <div style="font-size:12px;color:var(--text-muted);">Venc. ${fmtDate(f.data)} · ${f.fav}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:700;font-size:15px;color:var(--navy);">${fmtMoney(f.valor)}</div>
+              <div style="font-size:11px;color:${urgente?'var(--red)':'var(--text-muted)'};">${d === 0?'Hoje':d===1?'Amanhã':'em '+d+' dias'}</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="pagarItemDiaADia(${f.id})" style="margin-left:8px;">✓</button>
+          </div>`;
+        }).join('')}
+      </div>` : '<div class="empty"><div class="empty-icon">💸</div>Nenhum pagamento nos próximos 30 dias!</div>';
+  }
+
+  // Contatos rápidos
+  const ct = document.getElementById('diaadia-contatos');
+  if (ct) {
+    ct.innerHTML = DATA.contatos.map(c => `
+      <div style="background:white;border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-weight:600;font-size:14px;">${c.nome}</div>
+          <div style="font-size:12px;color:var(--text-muted);">WhatsApp</div>
+        </div>
+        <button class="btn btn-wa btn-sm" onclick="sendWA('${c.numero}','Olá, sou Renata — Síndica do Condomínio Higienópolis Tower.')">💬 Chamar</button>
+      </div>
+    `).join('');
+  }
+}
+
+function pagarItemDiaADia(id) {
+  const i = DATA.financeiro.find(x => x.id === id);
+  if (i) i.status = 'Pago';
+  renderFinanceiro(); renderDashboard(); renderDiaADia();
+  toast('✅ Pagamento marcado como pago');
+}
+
 // ── ACTIONS ───────────────────────────────────────────────────────────────────
 function markDone(type, id) {
   if (type === 'agenda') { const i = DATA.agenda.find(a => a.id === id); if(i) i.concluido = true; renderAgenda(); renderDashboard(); }
@@ -923,6 +1116,7 @@ renderJuridico();
 renderContratos();
 renderFinanceiro();
 renderWhatsApp();
+renderDiaADia();
 
 // ── FOTOS ─────────────────────────────────────────────────────────────────────
 const CATS = ["Obra / Reforma", "Manutenção", "Assembleia", "Área Comum", "Fachada", "Ocorrência", "Outros"];
