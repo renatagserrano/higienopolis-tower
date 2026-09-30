@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=IBM+Plex+Mono:wght@400;500&family=Montserrat:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,400&family=IBM+Plex+Mono:wght@400;500&family=Montserrat:wght@300;400;500;600;700&display=swap">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -31,272 +31,296 @@
 }
 </script>
 <style>
-/* Layout: black brand ground for hero and contact, concrete-grey "laudo" sheets for the reading sections; tactile-floor yellow used only as a signal. */
+/* Layout: brand-black ground; reading sections sit on rounded light panels; pill index in the header tracks the section in view; tactile-floor yellow marks the active state. */
 :root {
-  --ink: #0e0e0e;
-  --ink-2: #181817;
-  --paper: #e7e7e3;
-  --paper-2: #f3f3f0;
-  --line-dark: #2c2c2a;
-  --line-light: #c9c9c3;
-  --muted-dark: #9a9a94;
-  --muted-light: #5d5d58;
-  --fg-dark: #f4f4f1;
-  --fg-light: #151514;
-  --signal: #d4a31c;
+  --ink: #0d0d0d;
+  --ink-2: #171717;
+  --ink-3: #222221;
+  --panel: #f1f1ee;
+  --panel-2: #ffffff;
+  --line-dark: #2e2e2c;
+  --line-light: #dcdcd6;
+  --muted-dark: #a3a39d;
+  --muted-light: #62625d;
+  --fg-dark: #f5f5f2;
+  --fg-light: #141413;
+  --signal: #e0ad1f;
 
-  --display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
-  --body: "Montserrat", "Helvetica Neue", Arial, sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --accent: "Bodoni Moda", "Didot", Georgia, serif;
+  --sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 
-  --step--1: 0.8125rem;
-  --step-0: 1rem;
-  --step-1: 1.25rem;
-  --step-2: 1.75rem;
-  --step-3: clamp(2rem, 4.2vw, 3rem);
-  --step-4: clamp(2.5rem, 6.4vw, 4.75rem);
-
-  --gutter: clamp(16px, 4vw, 48px);
-  --max: 1180px;
+  --h1: clamp(2.4rem, 6vw, 4.6rem);
+  --h2: clamp(1.9rem, 3.6vw, 2.8rem);
+  --r-lg: 28px;
+  --r-md: 18px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --max: 1200px;
+  --header-h: 72px;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
-body {
-  margin: 0;
-  background: var(--ink);
-  color: var(--fg-dark);
-  font-family: var(--body);
-  font-size: var(--step-0);
-  font-weight: 400;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; animation: none !important; } }
+body { margin: 0; background: var(--ink); color: var(--fg-dark); font-family: var(--sans); font-size: 1rem; line-height: 1.6; -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
-h1, h2, h3 { text-wrap: balance; margin: 0; }
+h1, h2, h3 { margin: 0; text-wrap: balance; font-weight: 700; letter-spacing: -0.025em; }
 p { margin: 0; }
+section[id], article[id] { scroll-margin-top: calc(var(--header-h) + 64px); }
 
 .wrap { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
+.eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; }
+.eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); }
+.mono { font-family: var(--mono); font-size: 0.8rem; }
 
-.label {
-  font-family: var(--body);
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-}
-.mono { font-family: var(--mono); font-size: var(--step--1); letter-spacing: 0.02em; }
-
-/* Buttons */
+/* Pills and buttons */
 .btn {
-  display: inline-flex; align-items: center; gap: 0.6em;
-  padding: 0.95em 1.5em;
-  font: 500 0.78rem/1 var(--body);
-  letter-spacing: 0.16em; text-transform: uppercase;
-  text-decoration: none;
-  border: 1px solid currentColor;
-  transition: background .2s, color .2s, border-color .2s;
-  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.55em;
+  padding: 0.9em 1.45em; border-radius: 999px;
+  font: 600 0.9rem/1 var(--sans); text-decoration: none; cursor: pointer;
+  border: 1px solid transparent; transition: transform .15s, background .2s, color .2s, border-color .2s;
 }
-.btn-solid { background: var(--fg-dark); color: var(--ink); border-color: var(--fg-dark); }
-.btn-solid:hover { background: var(--signal); border-color: var(--signal); }
-.btn-ghost { background: transparent; color: var(--fg-dark); }
-.btn-ghost:hover { border-color: var(--signal); color: var(--signal); }
-.btn svg { width: 1.1em; height: 1.1em; flex: none; }
+.btn:hover { transform: translateY(-1px); }
+.btn svg { width: 1.15em; height: 1.15em; flex: none; }
+.btn-light { background: var(--fg-dark); color: var(--ink); }
+.btn-light:hover { background: var(--signal); }
+.btn-outline { border-color: var(--line-dark); color: var(--fg-dark); background: transparent; }
+.btn-outline:hover { border-color: var(--fg-dark); }
+.btn-dark { background: var(--ink); color: var(--fg-dark); }
+.btn-dark:hover { background: var(--ink-3); }
 
-/* Header */
+/* Header with pill index */
 .site-header {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
-  background: color-mix(in srgb, var(--ink) 92%, transparent);
-  backdrop-filter: blur(8px);
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 40;
+  background: color-mix(in srgb, var(--ink) 88%, transparent);
+  backdrop-filter: saturate(140%) blur(12px);
+  -webkit-backdrop-filter: saturate(140%) blur(12px);
   border-bottom: 1px solid var(--line-dark);
 }
-.site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 0.9rem; }
-.brand img { height: 30px; width: auto; }
-.nav { display: flex; align-items: center; gap: clamp(1rem, 2.4vw, 2rem); }
-.nav a:not(.btn) { text-decoration: none; color: var(--muted-dark); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; }
-.nav a:not(.btn):hover { color: var(--fg-dark); }
-.nav .btn { padding: 0.7em 1.1em; }
-.menu-toggle { display: none; background: none; border: 1px solid var(--line-dark); color: var(--fg-dark); padding: 0.5rem 0.7rem; font: 500 0.72rem var(--body); letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer; }
-@media (max-width: 860px) {
-  .menu-toggle { display: inline-block; }
-  .nav { display: none; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; align-items: stretch; gap: 0; background: var(--ink); border-bottom: 1px solid var(--line-dark); padding: 0.5rem var(--gutter) 1.25rem; }
-  .nav.open { display: flex; }
-  .nav a:not(.btn) { padding: 0.9rem 0; border-bottom: 1px solid var(--line-dark); }
-  .nav .btn { margin-top: 1rem; justify-content: center; }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: var(--header-h); }
+.brand img { height: 28px; width: auto; }
+.index {
+  display: flex; gap: 4px; padding: 5px; border-radius: 999px;
+  background: var(--ink-2); border: 1px solid var(--line-dark);
 }
+.index a {
+  padding: 0.55rem 1rem; border-radius: 999px; text-decoration: none; white-space: nowrap;
+  font-size: 0.84rem; font-weight: 500; color: var(--muted-dark);
+  transition: background .2s, color .2s;
+}
+.index a:hover { color: var(--fg-dark); background: var(--ink-3); }
+.index a.active { background: var(--fg-dark); color: var(--ink); }
+.bar .btn { padding: 0.75em 1.2em; font-size: 0.84rem; }
+.index-mobile { display: none; }
+@media (max-width: 980px) {
+  .bar .index { display: none; }
+  .index-mobile { display: block; border-top: 1px solid var(--line-dark); }
+  .index-mobile .index { overflow-x: auto; scrollbar-width: none; background: transparent; border: 0; border-radius: 0; padding: 8px var(--gutter); gap: 6px; }
+  .index-mobile .index::-webkit-scrollbar { display: none; }
+  .index-mobile .index a { border: 1px solid var(--line-dark); }
+  .index-mobile .index a.active { border-color: var(--fg-dark); }
+}
+@media (max-width: 480px) { .bar .btn span { display: none; } .bar .btn { padding: 0.75em; } }
 
 /* Hero */
-.hero { padding-block: clamp(3.5rem, 9vw, 7rem) clamp(3rem, 7vw, 5.5rem); }
-.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: clamp(2.5rem, 6vw, 5rem); align-items: end; }
-.hero .label { color: var(--signal); }
-.hero h1 {
-  font-family: var(--display); font-weight: 400;
-  font-size: var(--step-4); line-height: 1.02; letter-spacing: -0.01em;
-  margin-top: 1.25rem;
+.hero { padding-block: clamp(3rem, 8vw, 6rem) clamp(2.5rem, 5vw, 4rem); }
+.hero .eyebrow { color: var(--muted-dark); }
+.hero h1 { font-size: var(--h1); line-height: 1.02; margin-top: 1.25rem; max-width: 15ch; }
+.hero h1 em { font-family: var(--accent); font-style: italic; font-weight: 400; letter-spacing: 0; color: var(--signal); }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 2.5rem 4rem; align-items: end; }
+.lede { color: #d2d2cd; font-size: 1.08rem; font-weight: 400; max-width: 34rem; }
+.hero .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+
+.picker { margin-top: clamp(2.5rem, 5vw, 3.5rem); }
+.picker > p { color: var(--muted-dark); font-size: 0.9rem; margin-bottom: 0.9rem; }
+.picker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 10px; }
+.pick {
+  display: flex; align-items: center; gap: 0.8rem; padding: 0.95rem 1rem; border-radius: var(--r-md);
+  background: var(--ink-2); border: 1px solid var(--line-dark); text-decoration: none;
+  font-size: 0.92rem; font-weight: 500; line-height: 1.25;
+  transition: border-color .2s, background .2s, transform .15s;
 }
-.hero h1 em { font-style: italic; color: var(--muted-dark); }
-.hero .lede { margin-top: 1.75rem; max-width: 36rem; color: #cfcfca; font-weight: 300; font-size: 1.075rem; }
-.hero .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.25rem; }
+.pick:hover { border-color: var(--signal); background: var(--ink-3); transform: translateY(-2px); }
+.pick .ic { flex: none; width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--ink-3); color: var(--signal); }
+.pick .ic svg { width: 20px; height: 20px; }
+.pick .go { margin-left: auto; color: var(--muted-dark); transition: transform .2s, color .2s; }
+.pick:hover .go { transform: translateX(3px); color: var(--signal); }
 
-.ficha { border: 1px solid var(--line-dark); background: var(--ink-2); }
-.ficha-head { display: flex; justify-content: space-between; gap: 1rem; padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--line-dark); color: var(--muted-dark); }
-.ficha dl { margin: 0; }
-.ficha .row { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 1rem; padding: 0.9rem 1.1rem; border-bottom: 1px solid var(--line-dark); }
-.ficha .row:last-child { border-bottom: 0; }
-.ficha dt { color: var(--muted-dark); }
-.ficha dd { margin: 0; font-size: 0.92rem; }
-
-/* Tactile warning floor (NBR 16537) used as the section divider */
-.piso {
-  height: 22px;
-  background-color: var(--ink);
-  background-image: radial-gradient(circle, var(--signal) 0 4px, transparent 4.5px);
-  background-size: 22px 22px;
-  background-position: 0 0;
-  opacity: 0.9;
+.creds-strip { margin-top: clamp(2.5rem, 5vw, 3.5rem); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line-dark); }
+.creds-strip div { padding: 1.1rem 1.25rem 0 0; min-width: 0; }
+.creds-strip div + div { padding-left: 1.25rem; border-left: 1px solid var(--line-dark); }
+.creds-strip b { display: block; font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; }
+.creds-strip span { color: var(--muted-dark); font-size: 0.85rem; }
+@media (max-width: 860px) {
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+  .creds-strip { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); row-gap: 1.1rem; }
+  .creds-strip div:nth-child(3) { padding-left: 0; border-left: 0; }
 }
 
-/* Paper sections */
-.sheet { background: var(--paper); color: var(--fg-light); padding-block: clamp(4rem, 9vw, 6.5rem); }
-.sheet.alt { background: var(--paper-2); }
-.sheet .label { color: var(--muted-light); }
-.sec-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 2rem 4rem; align-items: end; margin-bottom: clamp(2.5rem, 5vw, 3.5rem); }
-.sec-head h2 { font-family: var(--display); font-weight: 400; font-size: var(--step-3); line-height: 1.08; margin-top: 0.9rem; }
+/* Light panels */
+.panel {
+  background: var(--panel); color: var(--fg-light);
+  border-radius: var(--r-lg); margin-inline: clamp(8px, 1.5vw, 20px);
+  padding-block: clamp(3.5rem, 8vw, 6rem);
+}
+.panel + .panel { margin-top: clamp(8px, 1.5vw, 20px); }
+.panel .eyebrow { color: var(--muted-light); }
+.sec-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.25rem 4rem; align-items: end; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.sec-head h2 { font-size: var(--h2); line-height: 1.08; margin-top: 0.8rem; }
 .sec-head p { color: var(--muted-light); max-width: 34rem; }
+@media (max-width: 860px) { .sec-head { grid-template-columns: minmax(0, 1fr); } }
 
 /* Services */
-.services { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); border-top: 1px solid var(--line-light); border-left: 1px solid var(--line-light); }
-.svc { display: flex; flex-direction: column; gap: 0.9rem; padding: 1.75rem 1.6rem 1.6rem; border-right: 1px solid var(--line-light); border-bottom: 1px solid var(--line-light); min-width: 0; }
-.svc h3 { font-family: var(--display); font-weight: 500; font-size: 1.45rem; line-height: 1.15; }
-.svc p { font-size: 0.95rem; color: #3b3b38; }
-.svc .meta { margin-top: auto; padding-top: 1rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.4rem 1rem; border-top: 1px dashed var(--line-light); color: var(--muted-light); }
-.svc .meta b { font-weight: 500; color: var(--fg-light); }
-.svc.feature { background: var(--ink); color: var(--fg-dark); }
-@media (min-width: 1040px) {
-  .services { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .svc.feature { grid-column: span 2; }
-  .svc.feature p { max-width: 40rem; }
+.services { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 1040px) { .services { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .services { grid-template-columns: minmax(0, 1fr); } }
+.svc {
+  display: flex; flex-direction: column; gap: 0.85rem; min-width: 0;
+  padding: 1.6rem; border-radius: var(--r-md); background: var(--panel-2);
+  border: 1px solid var(--line-light);
+  transition: transform .2s, box-shadow .2s, border-color .2s;
 }
-.svc.ask { background: var(--paper-2); justify-content: space-between; }
-.svc.ask .btn { align-self: flex-start; color: var(--fg-light); }
-.svc.ask .btn:hover { color: var(--fg-light); border-color: var(--signal); background: var(--signal); }
-.svc.feature p { color: #cfcfca; }
-.svc.feature .meta { border-top-color: var(--line-dark); color: var(--muted-dark); }
-.svc.feature .meta b { color: var(--signal); }
+.svc:hover { transform: translateY(-3px); box-shadow: 0 14px 30px -18px rgba(0,0,0,.35); }
+.svc:target { border-color: var(--signal); box-shadow: 0 0 0 3px color-mix(in srgb, var(--signal) 45%, transparent); }
+.svc .ic { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: var(--panel); color: var(--fg-light); }
+.svc .ic svg { width: 24px; height: 24px; }
+.svc h3 { font-size: 1.2rem; line-height: 1.25; letter-spacing: -0.015em; }
+.svc p { font-size: 0.94rem; color: #45453f; }
+.tags { margin-top: auto; padding-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 0.74rem; padding: 0.3rem 0.65rem; border-radius: 999px; background: var(--panel); color: var(--muted-light); }
+.tag.norma { font-family: var(--mono); background: var(--fg-light); color: var(--fg-dark); }
+.svc.feature { grid-column: span 2; background: var(--ink); color: var(--fg-dark); border-color: var(--ink); }
+.svc.feature p { color: #d2d2cd; max-width: 40rem; }
+.svc.feature .ic { background: var(--ink-3); color: var(--signal); }
+.svc.feature .tag { background: var(--ink-3); color: var(--muted-dark); }
+.svc.feature .tag.norma { background: var(--signal); color: var(--ink); }
+@media (max-width: 640px) { .svc.feature { grid-column: auto; } }
+.svc.ask { background: transparent; border-style: dashed; justify-content: center; }
+.svc.ask .btn { align-self: flex-start; margin-top: 0.4rem; }
 
-.publico { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2.5rem; align-items: center; }
-.publico .label { margin-right: 0.75rem; }
-.chip { font-size: 0.85rem; padding: 0.4rem 0.85rem; border: 1px solid var(--line-light); background: var(--paper-2); }
+.publico { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 2rem; }
+.publico > span:first-child { font-size: 0.8rem; font-weight: 600; color: var(--muted-light); margin-right: 0.5rem; }
+.chip { font-size: 0.85rem; padding: 0.45rem 0.9rem; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line-light); }
 
 /* Process */
-.steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; counter-reset: s; border-top: 2px solid var(--fg-light); }
-.step { padding: 1.5rem 1.5rem 0 0; min-width: 0; }
-.step + .step { padding-left: 1.5rem; border-left: 1px solid var(--line-light); }
-.step .n { font-family: var(--display); font-size: 2.6rem; line-height: 1; }
-.step h3 { font-size: 1rem; font-weight: 600; margin-top: 1rem; }
-.step p { font-size: 0.93rem; color: var(--muted-light); margin-top: 0.5rem; }
-@media (max-width: 860px) {
-  .steps { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .step:nth-child(3) { padding-left: 0; border-left: 0; }
-  .step { padding-bottom: 1.5rem; }
-}
-@media (max-width: 520px) {
-  .steps { grid-template-columns: minmax(0, 1fr); }
-  .step, .step + .step { padding-left: 0; border-left: 0; border-bottom: 1px solid var(--line-light); }
-}
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.step { background: var(--panel-2); border: 1px solid var(--line-light); border-radius: var(--r-md); padding: 1.5rem; min-width: 0; }
+.step .n { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--fg-light); color: var(--fg-dark); font-weight: 700; font-size: 0.95rem; }
+.step h3 { font-size: 1.05rem; margin-top: 1rem; letter-spacing: -0.01em; }
+.step p { font-size: 0.93rem; color: var(--muted-light); margin-top: 0.4rem; }
+@media (max-width: 900px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .steps { grid-template-columns: minmax(0, 1fr); } }
 
 /* About */
-.about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: clamp(2.5rem, 6vw, 5rem); }
-.about h2 { font-family: var(--display); font-weight: 400; font-size: var(--step-3); line-height: 1.08; margin-top: 0.9rem; }
-.about .intro p { margin-top: 1.25rem; color: #3b3b38; max-width: 34rem; }
-.creds { margin-top: 2rem; display: grid; gap: 0; border-top: 1px solid var(--line-light); }
-.creds div { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 1rem; padding: 0.8rem 0; border-bottom: 1px solid var(--line-light); font-size: 0.93rem; }
-.creds dt { color: var(--muted-light); }
-.creds dd { margin: 0; }
-.timeline { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--fg-light); }
-.timeline li { position: relative; padding: 0 0 1.6rem 1.5rem; }
-.timeline li:last-child { padding-bottom: 0; }
-.timeline li::before { content: ""; position: absolute; left: -5px; top: 0.45rem; width: 9px; height: 9px; background: var(--paper); border: 1px solid var(--fg-light); border-radius: 50%; }
-.timeline li.now::before { background: var(--signal); border-color: var(--signal); }
-.timeline .when { color: var(--muted-light); }
-.timeline h3 { font-size: 1rem; font-weight: 600; margin-top: 0.2rem; }
-.timeline p { font-size: 0.92rem; color: #3b3b38; margin-top: 0.25rem; }
+.about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(2.5rem, 6vw, 5rem); }
+.about h2 { font-size: var(--h2); line-height: 1.08; margin-top: 0.8rem; }
+.about .intro p { margin-top: 1.2rem; color: #45453f; max-width: 34rem; }
+.facts { margin-top: 1.75rem; display: grid; gap: 8px; }
+.facts div { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 1rem; padding: 0.8rem 1rem; border-radius: 14px; background: var(--panel-2); border: 1px solid var(--line-light); font-size: 0.92rem; }
+.facts dt { color: var(--muted-light); font-family: var(--mono); font-size: 0.78rem; padding-top: 0.15rem; }
+.facts dd { margin: 0; }
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.timeline li { padding: 1.1rem 1.25rem; border-radius: var(--r-md); background: var(--panel-2); border: 1px solid var(--line-light); }
+.timeline li.now { background: var(--ink); color: var(--fg-dark); border-color: var(--ink); }
+.timeline .when { font-family: var(--mono); font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 999px; background: var(--panel); color: var(--muted-light); }
+.timeline li.now .when { background: var(--signal); color: var(--ink); }
+.timeline h3 { font-size: 1rem; margin-top: 0.6rem; letter-spacing: -0.01em; }
+.timeline p { font-size: 0.9rem; color: #45453f; margin-top: 0.25rem; }
+.timeline li.now p { color: #d2d2cd; }
+@media (max-width: 860px) { .about { grid-template-columns: minmax(0, 1fr); } }
 
 /* FAQ */
-.faq { border-top: 1px solid var(--line-light); max-width: 52rem; }
-.faq details { border-bottom: 1px solid var(--line-light); }
-.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 1.5rem; padding: 1.25rem 0; font-family: var(--display); font-size: 1.3rem; line-height: 1.25; }
+.faq { display: grid; gap: 10px; max-width: 54rem; }
+.faq details { background: var(--panel-2); border: 1px solid var(--line-light); border-radius: var(--r-md); }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 1.25rem; padding: 1.1rem 1.25rem; font-weight: 600; font-size: 1.02rem; letter-spacing: -0.01em; }
 .faq summary::-webkit-details-marker { display: none; }
-.faq summary::after { content: "+"; font-family: var(--body); font-weight: 300; font-size: 1.5rem; line-height: 1; transition: transform .2s; }
-.faq details[open] summary::after { transform: rotate(45deg); }
-.faq details p { padding: 0 0 1.4rem; color: #3b3b38; max-width: 44rem; }
+.faq summary::after { content: "+"; flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--panel); font-weight: 400; font-size: 1.2rem; transition: transform .2s, background .2s; }
+.faq details[open] summary::after { transform: rotate(45deg); background: var(--signal); }
+.faq details p { padding: 0 1.25rem 1.25rem; color: #45453f; max-width: 46rem; }
 
 /* Contact */
 .contact { padding-block: clamp(4rem, 9vw, 6.5rem); }
-.contact .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(2.5rem, 6vw, 5rem); }
-.contact h2 { font-family: var(--display); font-weight: 400; font-size: var(--step-3); line-height: 1.08; margin-top: 0.9rem; }
-.contact .label { color: var(--signal); }
-.contact .intro p { color: #cfcfca; font-weight: 300; margin-top: 1.25rem; max-width: 30rem; }
-.channels { margin-top: 2rem; display: grid; gap: 0; border-top: 1px solid var(--line-dark); }
-.channels div { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 1rem; padding: 0.85rem 0; border-bottom: 1px solid var(--line-dark); }
-.channels dt { color: var(--muted-dark); }
+.contact .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(2.5rem, 6vw, 5rem); }
+.contact .eyebrow { color: var(--muted-dark); }
+.contact h2 { font-size: var(--h2); line-height: 1.08; margin-top: 0.8rem; }
+.contact .intro > p { color: #d2d2cd; margin-top: 1.1rem; max-width: 30rem; }
+.channels { margin-top: 1.75rem; display: grid; gap: 8px; }
+.channels div { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 1rem; padding: 0.85rem 1rem; border-radius: 14px; background: var(--ink-2); border: 1px solid var(--line-dark); }
+.channels dt { color: var(--muted-dark); font-family: var(--mono); font-size: 0.78rem; padding-top: 0.15rem; }
 .channels dd { margin: 0; overflow-wrap: anywhere; }
-.channels a { text-decoration: none; border-bottom: 1px solid var(--line-dark); }
-.channels a:hover { border-color: var(--signal); }
-
-form { display: grid; gap: 1.1rem; background: var(--ink-2); border: 1px solid var(--line-dark); padding: clamp(1.25rem, 3vw, 2rem); align-content: start; }
+.channels a { text-decoration: none; }
+.channels a:hover { color: var(--signal); }
+form { display: grid; gap: 1rem; align-content: start; background: var(--ink-2); border: 1px solid var(--line-dark); border-radius: var(--r-lg); padding: clamp(1.25rem, 3vw, 2rem); }
 .field { display: grid; gap: 0.4rem; }
-.field label { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted-dark); }
-.field input, .field select, .field textarea {
-  width: 100%; font: 400 1rem var(--body); color: var(--fg-dark);
-  background: var(--ink); border: 1px solid var(--line-dark); padding: 0.8rem 0.9rem; border-radius: 0;
-}
+.field label { font-size: 0.8rem; font-weight: 500; color: var(--muted-dark); }
+.field input, .field select, .field textarea { width: 100%; font: 400 1rem var(--sans); color: var(--fg-dark); background: var(--ink); border: 1px solid var(--line-dark); border-radius: 12px; padding: 0.8rem 0.95rem; }
 .field textarea { min-height: 7rem; resize: vertical; }
 .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--signal); }
-.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.1rem; }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
 .form-note { font-size: 0.8rem; color: var(--muted-dark); }
-form .btn { justify-content: center; }
-
-footer { border-top: 1px solid var(--line-dark); padding-block: 2rem; color: var(--muted-dark); font-size: 0.82rem; }
-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem 2rem; align-items: center; }
-footer img { height: 22px; width: auto; opacity: .8; }
-
-.wa-float {
-  position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 30;
-  display: none; align-items: center; justify-content: center;
-  width: 56px; height: 56px; border-radius: 50%;
-  background: var(--signal); color: var(--ink); box-shadow: 0 6px 20px rgba(0,0,0,.35);
-}
-.wa-float svg { width: 28px; height: 28px; }
-
-@media (max-width: 860px) {
-  .hero .wrap, .sec-head, .about, .contact .wrap { grid-template-columns: minmax(0, 1fr); }
-  .wa-float { display: inline-flex; }
-}
+@media (max-width: 860px) { .contact .grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 520px) {
   .two { grid-template-columns: minmax(0, 1fr); }
-  .ficha .row { grid-template-columns: minmax(0, 1fr); gap: 0.2rem; }
-  .creds div, .channels div { grid-template-columns: minmax(0, 1fr); gap: 0.2rem; }
-  .hero .actions .btn { flex: 1 1 100%; justify-content: center; }
+  .facts div, .channels div { grid-template-columns: minmax(0, 1fr); gap: 0.15rem; }
+  .hero .actions .btn { flex: 1 1 100%; }
 }
+
+footer { border-top: 1px solid var(--line-dark); padding-block: 1.75rem; color: var(--muted-dark); font-size: 0.82rem; }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem 2rem; }
+footer img { height: 22px; width: auto; opacity: .8; }
+
+.to-top {
+  position: fixed; right: 16px; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); z-index: 30;
+  width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--ink-2); color: var(--fg-dark); border: 1px solid var(--line-dark); text-decoration: none;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.to-top.show { opacity: 1; pointer-events: auto; }
+.wa-float {
+  position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 30;
+  width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--signal); color: var(--ink); box-shadow: 0 8px 24px rgba(0,0,0,.4);
+}
+.wa-float svg { width: 28px; height: 28px; }
 </style>
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></symbol>
+    <symbol id="i-acess" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="4" r="1.8"/><path d="M11 7v6h5l2 5"/><path d="M11 10h4"/><path d="M8 11.5a5 5 0 1 0 6.5 6.5"/></g></symbol>
+    <symbol id="i-crack" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3l-2 5 3 3-3 4 2 6"/></g></symbol>
+    <symbol id="i-pool" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 16c2 0 2-1.5 4-1.5S8 16 10 16s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/><path d="M2 20c2 0 2-1.5 4-1.5S8 20 10 20s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/><path d="M8 13V5a2 2 0 0 1 4 0M14 13V5a2 2 0 0 1 4 0M8 8h6"/></g></symbol>
+    <symbol id="i-house" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9 15l2 2 4-4"/></g></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h3l2-3h6l2 3h3v13H4z"/><circle cx="12" cy="13" r="3.5"/></g></symbol>
+    <symbol id="i-value" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></g></symbol>
+    <symbol id="i-helmet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18"/><path d="M5 17v-3a7 7 0 0 1 14 0v3"/><path d="M10 7.5V5h4v2.5"/></g></symbol>
+    <symbol id="i-question" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.5V14"/><path d="M12 17.5h.01"/></g></symbol>
+  </defs>
+</svg>
+
 <header class="site-header">
-  <div class="wrap">
-    <a class="brand" href="#topo" aria-label="Teçá Soluções em Engenharia, início"><img src="logo-teca-mark.png" alt="Teçá" width="240" height="123"></a>
-    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="nav">Menu</button>
-    <nav class="nav" id="nav" aria-label="Principal">
+  <div class="wrap bar">
+    <a class="brand" href="#topo" aria-label="Teçá, voltar ao início"><img src="logo-teca-mark.png" alt="Teçá" width="240" height="123"></a>
+    <nav class="index" aria-label="Índice">
       <a href="#servicos">Serviços</a>
       <a href="#como-funciona">Como funciona</a>
       <a href="#fabiola">A engenheira</a>
       <a href="#duvidas">Dúvidas</a>
-      <a class="btn btn-ghost" href="#contato">Pedir orçamento</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <a class="btn btn-light wa-link" href="https://wa.me/5511991157690" target="_blank" rel="noopener" aria-label="Orçamento no WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg><span>Orçamento</span></a>
+  </div>
+  <div class="index-mobile">
+    <nav class="index" aria-label="Índice">
+      <a href="#servicos">Serviços</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#fabiola">A engenheira</a>
+      <a href="#duvidas">Dúvidas</a>
+      <a href="#contato">Contato</a>
     </nav>
   </div>
 </header>
@@ -305,89 +329,105 @@ footer img { height: 22px; width: auto; opacity: .8; }
 
 <section class="hero">
   <div class="wrap">
-    <div>
-      <p class="label">Engenharia diagnóstica · São Paulo</p>
-      <h1>Laudos e vistorias para quem precisa <em>decidir</em> sobre um imóvel.</h1>
-      <p class="lede">Acessibilidade conforme a NBR 9050, patologias da construção, vistoria pré-compra e perícia em piscinas, com a engenheira civil Fabíola Mancuso Theotto, em obra desde 1995 e inscrita como perita e avaliadora no TJSP.</p>
-      <div class="actions">
-        <a class="btn btn-solid wa-link" href="https://wa.me/5511991157690" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
-          Orçamento no WhatsApp
-        </a>
-        <a class="btn btn-ghost" href="#servicos">Ver serviços</a>
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Engenharia diagnóstica · São Paulo</p>
+        <h1>Laudos e vistorias para quem precisa <em>decidir</em> sobre um imóvel.</h1>
+      </div>
+      <div>
+        <p class="lede">Acessibilidade conforme a NBR 9050, patologias da construção, vistoria pré-compra e perícia em piscinas, com a engenheira civil Fabíola Mancuso Theotto.</p>
+        <div class="actions">
+          <a class="btn btn-light wa-link" href="https://wa.me/5511991157690" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>Orçamento no WhatsApp</a>
+          <a class="btn btn-outline" href="#servicos">Ver serviços</a>
+        </div>
       </div>
     </div>
 
-    <aside class="ficha" aria-label="Ficha técnica">
-      <div class="ficha-head mono"><span>FICHA TÉCNICA</span><span>SP · BR</span></div>
-      <dl>
-        <div class="row"><dt class="mono">Responsável</dt><dd>Fabíola Mancuso Theotto, engenheira civil</dd></div>
-        <div class="row"><dt class="mono">Em obra desde</dt><dd>1995, entre varejo, hotelaria, residencial e condomínios</dd></div>
-        <div class="row"><dt class="mono">Perícia</dt><dd>Perita e avaliadora inscrita no TJSP e na AJG (Justiça Federal)</dd></div>
-        <div class="row"><dt class="mono">Foco</dt><dd>Acessibilidade, patologias, piscinas e recebimento de obras</dd></div>
-        <div class="row"><dt class="mono">Teçá desde</dt><dd>Dezembro de 2017</dd></div>
-      </dl>
-    </aside>
+    <div class="picker">
+      <p>Do que você precisa?</p>
+      <div class="picker-grid">
+        <a class="pick" href="#s-acessibilidade"><span class="ic"><svg aria-hidden="true"><use href="#i-acess"/></svg></span>Laudo de acessibilidade<span class="go" aria-hidden="true">→</span></a>
+        <a class="pick" href="#s-precompra"><span class="ic"><svg aria-hidden="true"><use href="#i-house"/></svg></span>Vistoria pré-compra<span class="go" aria-hidden="true">→</span></a>
+        <a class="pick" href="#s-patologias"><span class="ic"><svg aria-hidden="true"><use href="#i-crack"/></svg></span>Fissuras e infiltrações<span class="go" aria-hidden="true">→</span></a>
+        <a class="pick" href="#s-piscinas"><span class="ic"><svg aria-hidden="true"><use href="#i-pool"/></svg></span>Perícia em piscina<span class="go" aria-hidden="true">→</span></a>
+        <a class="pick" href="#s-cautelar"><span class="ic"><svg aria-hidden="true"><use href="#i-camera"/></svg></span>Vistoria cautelar<span class="go" aria-hidden="true">→</span></a>
+        <a class="pick" href="#s-avaliacao"><span class="ic"><svg aria-hidden="true"><use href="#i-value"/></svg></span>Avaliação de imóvel<span class="go" aria-hidden="true">→</span></a>
+        <a class="pick" href="#s-obras"><span class="ic"><svg aria-hidden="true"><use href="#i-helmet"/></svg></span>Fiscalização de obra<span class="go" aria-hidden="true">→</span></a>
+        <a class="pick" href="#contato"><span class="ic"><svg aria-hidden="true"><use href="#i-question"/></svg></span>Ainda não sei<span class="go" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+
+    <div class="creds-strip">
+      <div><b>Desde 1995</b><span>em obra: varejo, hotelaria, residencial, condomínios</span></div>
+      <div><b>Perita no TJSP</b><span>e na AJG (Justiça Federal), perita e avaliadora</span></div>
+      <div><b>NBR 9050</b><span>acessibilidade como especialização</span></div>
+      <div><b>Teçá, 2017</b><span>engenharia diagnóstica em São Paulo</span></div>
+    </div>
   </div>
 </section>
 
-<div class="piso" aria-hidden="true"></div>
-
-<section class="sheet" id="servicos">
+<section class="panel" id="servicos">
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <p class="label">Serviços</p>
+        <p class="eyebrow">Serviços</p>
         <h2>O que a Teçá entrega</h2>
       </div>
       <p>Cada serviço termina em um documento técnico: vistoria no local, registro fotográfico, fundamentação em norma e recomendações claras sobre o que fazer a seguir.</p>
     </div>
 
     <div class="services">
-      <article class="svc feature">
+      <article class="svc feature" id="s-acessibilidade">
+        <span class="ic"><svg aria-hidden="true"><use href="#i-acess"/></svg></span>
         <h3>Laudo técnico de acessibilidade</h3>
         <p>Avaliação da edificação conforme a NBR 9050: rotas acessíveis, rampas, sanitários, sinalização e mobiliário. O relatório aponta as não conformidades e as adequações necessárias, do diagnóstico ao acompanhamento da execução.</p>
-        <div class="meta mono"><span>Ref. <b>NBR 9050 · NBR 16537</b></span><span>Condomínios, clínicas, comércios</span></div>
+        <div class="tags"><span class="tag norma">NBR 9050</span><span class="tag norma">NBR 16537</span><span class="tag">Condomínios</span><span class="tag">Clínicas</span><span class="tag">Comércios</span></div>
       </article>
-      <article class="svc">
+      <article class="svc" id="s-patologias">
+        <span class="ic"><svg aria-hidden="true"><use href="#i-crack"/></svg></span>
         <h3>Laudo de patologias da construção</h3>
         <p>Diagnóstico de fissuras, trincas, infiltrações, umidade, descolamentos e corrosão. Identificamos causa e gravidade e indicamos a correção, com registro fotográfico.</p>
-        <div class="meta mono"><span>Ref. <b>NBR 13752</b></span><span>Condomínios, proprietários</span></div>
+        <div class="tags"><span class="tag norma">NBR 13752</span><span class="tag">Condomínios</span><span class="tag">Proprietários</span></div>
       </article>
-      <article class="svc">
+      <article class="svc" id="s-piscinas">
+        <span class="ic"><svg aria-hidden="true"><use href="#i-pool"/></svg></span>
         <h3>Laudo pericial em piscinas</h3>
         <p>Perícia para identificar vazamentos, fissuras e falhas de revestimento ou de execução. Serve para manutenção, negociação com a construtora ou instrução de processo.</p>
-        <div class="meta mono"><span>Ref. <b>NBR 10339</b></span><span>Residências, condomínios, clubes</span></div>
+        <div class="tags"><span class="tag norma">NBR 10339</span><span class="tag">Residências</span><span class="tag">Condomínios</span></div>
       </article>
-      <article class="svc">
+      <article class="svc" id="s-precompra">
+        <span class="ic"><svg aria-hidden="true"><use href="#i-house"/></svg></span>
         <h3>Vistoria pré-compra de imóvel</h3>
         <p>Inspeção antes da compra: estrutura, infiltrações, instalações e acabamentos. Você negocia e decide sabendo o que está comprando.</p>
-        <div class="meta mono"><span>Ref. <b>NBR 16747</b></span><span>Compradores, corretores</span></div>
+        <div class="tags"><span class="tag norma">NBR 16747</span><span class="tag">Compradores</span><span class="tag">Corretores</span></div>
       </article>
-      <article class="svc">
+      <article class="svc" id="s-cautelar">
+        <span class="ic"><svg aria-hidden="true"><use href="#i-camera"/></svg></span>
         <h3>Vistoria cautelar de vizinhança</h3>
         <p>Registro técnico do estado dos imóveis vizinhos antes de uma obra, com fotos e descrição de danos preexistentes. Protege a construtora e os vizinhos em questionamentos futuros.</p>
-        <div class="meta mono"><span>Antes do início da obra</span><span>Construtoras, condomínios</span></div>
+        <div class="tags"><span class="tag">Antes da obra</span><span class="tag">Construtoras</span><span class="tag">Condomínios</span></div>
       </article>
-      <article class="svc">
+      <article class="svc" id="s-avaliacao">
+        <span class="ic"><svg aria-hidden="true"><use href="#i-value"/></svg></span>
         <h3>Avaliação imobiliária</h3>
         <p>Determinação técnica do valor de mercado de imóveis residenciais e comerciais, com laudo fundamentado, para compra, venda, partilha, financiamento ou garantia.</p>
-        <div class="meta mono"><span>Ref. <b>NBR 14653</b></span><span>Judicial e extrajudicial</span></div>
+        <div class="tags"><span class="tag norma">NBR 14653</span><span class="tag">Judicial</span><span class="tag">Extrajudicial</span></div>
       </article>
-      <article class="svc">
+      <article class="svc" id="s-obras">
+        <span class="ic"><svg aria-hidden="true"><use href="#i-helmet"/></svg></span>
         <h3>Fiscalização e recebimento de obras</h3>
-        <p>Acompanhamento técnico da obra e vistoria de entrega: qualidade de execução, aderência ao projeto e ao memorial descritivo, prazos. Relatórios periódicos para o proprietário ou para o corpo diretivo do condomínio.</p>
-        <div class="meta mono"><span>Obra em andamento e entrega</span><span>Síndicos, proprietários</span></div>
+        <p>Acompanhamento técnico da obra e vistoria de entrega: qualidade de execução, aderência ao projeto e ao memorial descritivo, prazos. Relatórios para o proprietário ou para o corpo diretivo do condomínio.</p>
+        <div class="tags"><span class="tag">Síndicos</span><span class="tag">Proprietários</span></div>
       </article>
       <article class="svc ask">
         <h3>Não sabe qual serviço pedir?</h3>
-        <p>Mande fotos e uma descrição do problema. A Fabíola indica o tipo de laudo ou vistoria adequado e o escopo do trabalho.</p>
-        <a class="btn wa-link" href="https://wa.me/5511991157690" target="_blank" rel="noopener">Enviar fotos no WhatsApp</a>
+        <p>Mande fotos e uma descrição do problema. A Fabíola indica o laudo ou a vistoria adequada e o escopo do trabalho.</p>
+        <a class="btn btn-dark wa-link" href="https://wa.me/5511991157690" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>Enviar fotos</a>
       </article>
     </div>
 
     <div class="publico">
-      <span class="label">Quem atendemos</span>
+      <span>Quem atendemos</span>
       <span class="chip">Condomínios e síndicos</span>
       <span class="chip">Compradores de imóveis</span>
       <span class="chip">Clínicas e comércios</span>
@@ -397,54 +437,54 @@ footer img { height: 22px; width: auto; opacity: .8; }
   </div>
 </section>
 
-<section class="sheet alt" id="como-funciona">
+<section class="panel" id="como-funciona">
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <p class="label">Como funciona</p>
+        <p class="eyebrow">Como funciona</p>
         <h2>Do primeiro contato ao laudo</h2>
       </div>
       <p>O orçamento depende do tipo de serviço, da área e do endereço. Com fotos e algumas informações pelo WhatsApp já dá para dimensionar o trabalho.</p>
     </div>
-    <ol class="steps" style="list-style:none;margin:0;padding:0">
-      <li class="step"><div class="n">1</div><h3>Conversa inicial</h3><p>Você conta o problema ou a necessidade, envia fotos e o endereço. Definimos o escopo e enviamos o orçamento.</p></li>
-      <li class="step"><div class="n">2</div><h3>Vistoria no local</h3><p>Inspeção presencial com medições e registro fotográfico de tudo o que for relevante.</p></li>
-      <li class="step"><div class="n">3</div><h3>Laudo técnico</h3><p>Documento com o diagnóstico, a fundamentação normativa e as recomendações de correção ou adequação.</p></li>
-      <li class="step"><div class="n">4</div><h3>Orientação</h3><p>Explicamos o laudo e as prioridades, para você decidir, negociar ou contratar a correção com segurança.</p></li>
+    <ol class="steps">
+      <li class="step"><span class="n">1</span><h3>Conversa inicial</h3><p>Você conta o problema ou a necessidade, envia fotos e o endereço. Definimos o escopo e enviamos o orçamento.</p></li>
+      <li class="step"><span class="n">2</span><h3>Vistoria no local</h3><p>Inspeção presencial com medições e registro fotográfico de tudo o que for relevante.</p></li>
+      <li class="step"><span class="n">3</span><h3>Laudo técnico</h3><p>Documento com o diagnóstico, a fundamentação normativa e as recomendações de correção ou adequação.</p></li>
+      <li class="step"><span class="n">4</span><h3>Orientação</h3><p>Explicamos o laudo e as prioridades, para você decidir, negociar ou contratar a correção com segurança.</p></li>
     </ol>
   </div>
 </section>
 
-<section class="sheet" id="fabiola">
+<section class="panel" id="fabiola">
   <div class="wrap about">
     <div class="intro">
-      <p class="label">A engenheira</p>
+      <p class="eyebrow">A engenheira</p>
       <h2>Fabíola Mancuso Theotto</h2>
       <p>Engenheira civil formada em 1996, com trajetória que começou no canteiro como estagiária e passou por varejo, shopping centers, hotelaria, construção de piscinas e obras de alto padrão. Desde 2018 atua em engenharia diagnóstica e avaliação imobiliária, nas esferas judicial e extrajudicial.</p>
       <p>Fundou a Teçá para levar esse olhar de obra ao diagnóstico: entender como a edificação foi feita para explicar por que ela apresenta problemas, e o que fazer a respeito. A acessibilidade é o foco de especialização, com pós-graduação na área.</p>
-      <dl class="creds">
-        <div><dt class="mono">Formação</dt><dd>Engenharia Civil, Universidade Paulista (UNIP)</dd></div>
-        <div><dt class="mono">Pós</dt><dd>Acessibilidade arquitetônica</dd></div>
-        <div><dt class="mono">Perícia</dt><dd>Perita e avaliadora de imóveis no TJSP e na AJG</dd></div>
-        <div><dt class="mono">Extensão</dt><dd>Avaliação de imóveis, vistoria cautelar, inspeção predial e patologias em alvenarias e revestimentos</dd></div>
+      <dl class="facts">
+        <div><dt>Formação</dt><dd>Engenharia Civil, Universidade Paulista (UNIP)</dd></div>
+        <div><dt>Pós</dt><dd>Acessibilidade arquitetônica</dd></div>
+        <div><dt>Perícia</dt><dd>Perita e avaliadora de imóveis no TJSP e na AJG</dd></div>
+        <div><dt>Extensão</dt><dd>Avaliação de imóveis, vistoria cautelar, inspeção predial e patologias em alvenarias e revestimentos</dd></div>
       </dl>
     </div>
 
     <ol class="timeline" aria-label="Trajetória">
-      <li class="now"><span class="mono when">2017 – hoje</span><h3>Teçá Soluções em Engenharia</h3><p>Engenheira titular. Laudos, perícias, acessibilidade, gerenciamento e recebimento de obras em condomínios verticais e horizontais.</p></li>
-      <li><span class="mono when">2017 · 2021</span><h3>Atelier O'Reilly Architecture &amp; Partners</h3><p>Coordenação e engenharia residente em obras sustentáveis de alto padrão (wood frame, steel frame). Equipe vencedora do Prêmio Saint-Gobain de Sustentabilidade 2017.</p></li>
-      <li><span class="mono when">2008 – 2016</span><h3>Nárnia Construções e Piscinas</h3><p>Sócia e diretora de operações de construtora especializada em piscinas: a base técnica da perícia em piscinas.</p></li>
-      <li><span class="mono when">2007 – 2008</span><h3>Gestão de ativos hoteleiros</h3><p>Fiscalização da reforma integral de um hotel cinco estrelas em São Paulo.</p></li>
-      <li><span class="mono when">1995 – 2006</span><h3>Varejo e shopping centers</h3><p>Engenheira residente em obras fast track, incluindo lojas no Shopping Pátio Higienópolis e unidades de redes internacionais de alimentação.</p></li>
+      <li class="now"><span class="when">2017 – hoje</span><h3>Teçá Soluções em Engenharia</h3><p>Engenheira titular. Laudos, perícias, acessibilidade, gerenciamento e recebimento de obras em condomínios verticais e horizontais.</p></li>
+      <li><span class="when">2017 · 2021</span><h3>Atelier O'Reilly Architecture &amp; Partners</h3><p>Coordenação e engenharia residente em obras sustentáveis de alto padrão (wood frame, steel frame). Equipe vencedora do Prêmio Saint-Gobain de Sustentabilidade 2017.</p></li>
+      <li><span class="when">2008 – 2016</span><h3>Nárnia Construções e Piscinas</h3><p>Sócia e diretora de operações de construtora especializada em piscinas: a base técnica da perícia em piscinas.</p></li>
+      <li><span class="when">2007 – 2008</span><h3>Gestão de ativos hoteleiros</h3><p>Fiscalização da reforma integral de um hotel cinco estrelas em São Paulo.</p></li>
+      <li><span class="when">1995 – 2006</span><h3>Varejo e shopping centers</h3><p>Engenheira residente em obras fast track, incluindo lojas no Shopping Pátio Higienópolis e unidades de redes internacionais de alimentação.</p></li>
     </ol>
   </div>
 </section>
 
-<section class="sheet alt" id="duvidas">
+<section class="panel" id="duvidas">
   <div class="wrap">
     <div class="sec-head">
       <div>
-        <p class="label">Dúvidas frequentes</p>
+        <p class="eyebrow">Dúvidas frequentes</p>
         <h2>Antes de pedir o orçamento</h2>
       </div>
     </div>
@@ -473,19 +513,17 @@ footer img { height: 22px; width: auto; opacity: .8; }
   </div>
 </section>
 
-<div class="piso" aria-hidden="true"></div>
-
 <section class="contact" id="contato">
-  <div class="wrap">
+  <div class="wrap grid">
     <div class="intro">
-      <p class="label">Contato</p>
+      <p class="eyebrow">Contato</p>
       <h2>Conte o que está acontecendo com o imóvel.</h2>
-      <p>Preencha ao lado e a mensagem abre pronta no WhatsApp. Se preferir, use os canais abaixo.</p>
+      <p>Preencha o formulário e a mensagem abre pronta no WhatsApp. Se preferir, use os canais abaixo.</p>
       <dl class="channels">
-        <div><dt class="mono">WhatsApp</dt><dd><a class="wa-link" href="https://wa.me/5511991157690" target="_blank" rel="noopener">(11) 99115-7690</a></dd></div>
-        <div><dt class="mono">E-mail</dt><dd>fabitheotto.eng@gmail.com</dd></div>
-        <div><dt class="mono">Instagram</dt><dd><a href="https://www.instagram.com/tecaengdiagnostica/" target="_blank" rel="noopener">@tecaengdiagnostica</a></dd></div>
-        <div><dt class="mono">Atendimento</dt><dd>São Paulo, SP</dd></div>
+        <div><dt>WhatsApp</dt><dd><a class="wa-link" href="https://wa.me/5511991157690" target="_blank" rel="noopener">(11) 99115-7690</a></dd></div>
+        <div><dt>E-mail</dt><dd>fabitheotto.eng@gmail.com</dd></div>
+        <div><dt>Instagram</dt><dd><a href="https://www.instagram.com/tecaengdiagnostica/" target="_blank" rel="noopener">@tecaengdiagnostica</a></dd></div>
+        <div><dt>Atendimento</dt><dd>São Paulo, SP</dd></div>
       </dl>
     </div>
 
@@ -508,7 +546,7 @@ footer img { height: 22px; width: auto; opacity: .8; }
         </select>
       </div>
       <div class="field"><label for="f-msg">O que está acontecendo?</label><textarea id="f-msg" name="mensagem" placeholder="Tipo de imóvel, área aproximada, o problema ou a necessidade."></textarea></div>
-      <button class="btn btn-solid" type="submit">Enviar pelo WhatsApp</button>
+      <button class="btn btn-light" type="submit"><svg aria-hidden="true"><use href="#i-wa"/></svg>Enviar pelo WhatsApp</button>
       <p class="form-note" id="form-note">Você revisa a mensagem no WhatsApp antes de enviar. Nada é enviado automaticamente.</p>
     </form>
   </div>
@@ -524,9 +562,8 @@ footer img { height: 22px; width: auto; opacity: .8; }
   </div>
 </footer>
 
-<a class="wa-float wa-link" href="https://wa.me/5511991157690" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
-  <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
-</a>
+<a class="to-top" id="to-top" href="#topo" aria-label="Voltar ao topo">↑</a>
+<a class="wa-float wa-link" href="https://wa.me/5511991157690" target="_blank" rel="noopener" aria-label="Falar no WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg></a>
 
 <script>
 (function () {
@@ -536,15 +573,41 @@ footer img { height: 22px; width: auto; opacity: .8; }
     a.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(defaultMsg);
   });
 
-  var toggle = document.getElementById("menu-toggle");
-  var nav = document.getElementById("nav");
-  toggle.addEventListener("click", function () {
-    var open = nav.classList.toggle("open");
-    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  // Service picker: preselect the service in the form
+  var select = document.getElementById("f-servico");
+  var map = { "s-acessibilidade": 0, "s-patologias": 1, "s-piscinas": 2, "s-precompra": 3, "s-cautelar": 4, "s-avaliacao": 5, "s-obras": 6 };
+  document.querySelectorAll(".pick").forEach(function (p) {
+    p.addEventListener("click", function () {
+      var id = p.getAttribute("href").slice(1);
+      select.selectedIndex = id in map ? map[id] : 7;
+    });
   });
-  nav.querySelectorAll("a").forEach(function (a) {
-    a.addEventListener("click", function () { nav.classList.remove("open"); toggle.setAttribute("aria-expanded", "false"); });
-  });
+
+  // Scroll-spy for the pill index
+  var links = Array.prototype.slice.call(document.querySelectorAll(".index a"));
+  var ids = ["servicos", "como-funciona", "fabiola", "duvidas", "contato"];
+  var sections = ids.map(function (id) { return document.getElementById(id); });
+  function setActive(id) {
+    links.forEach(function (a) {
+      var on = a.getAttribute("href") === "#" + id;
+      a.classList.toggle("active", on);
+      if (on && a.closest(".index-mobile")) {
+        var nav = a.parentElement;
+        var left = a.offsetLeft - (nav.clientWidth - a.clientWidth) / 2;
+        nav.scrollTo({ left: left, behavior: "smooth" });
+      }
+    });
+  }
+  var toTop = document.getElementById("to-top");
+  function onScroll() {
+    var y = window.scrollY + window.innerHeight * 0.35;
+    var current = "";
+    sections.forEach(function (s) { if (s && s.offsetTop <= y) current = s.id; });
+    setActive(current);
+    toTop.classList.toggle("show", window.scrollY > 700);
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
 
   document.getElementById("ano").textContent = new Date().getFullYear();
 
@@ -558,16 +621,12 @@ footer img { height: 22px; width: auto; opacity: .8; }
       form.nome.focus();
       return;
     }
-    var linhas = [
-      "Olá, Fabíola! Vim pelo site da Teçá.",
-      "Nome: " + nome,
-      "Serviço: " + form.servico.value
-    ];
+    var linhas = ["Olá, Fabíola! Vim pelo site da Teçá.", "Nome: " + nome, "Serviço: " + form.servico.value];
     if (form.local.value.trim()) linhas.push("Local: " + form.local.value.trim());
     if (form.mensagem.value.trim()) linhas.push("Detalhes: " + form.mensagem.value.trim());
     var url = "https://wa.me/" + WA + "?text=" + encodeURIComponent(linhas.join("\n"));
-    var w = window.open(url, "_blank", "noopener");
-    if (!w) window.location.href = url;
+    var w = window.open(url, "_blank");
+    if (w) { w.opener = null; } else { window.location.href = url; }
     note.textContent = "Abrimos o WhatsApp com a sua mensagem. Se não abriu, chame no (11) 99115-7690.";
   });
 })();
