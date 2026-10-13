@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedido · Phenix Teccel</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--preto:#0A0A0B;--laranja:#F19E38;--espuma:#F5F2EC;--grafite:#26262A;--po:#8C8A86}
+*{box-sizing:border-box;margin:0}
+body{background:var(--preto);color:var(--espuma);font-family:'Barlow',sans-serif;min-height:100vh;display:flex;align-items:center;padding:48px 16px}
+main{max-width:560px;margin:0 auto;border-left:3px solid var(--laranja);padding-left:24px}
+.k{font-family:'Oswald',sans-serif;letter-spacing:.22em;font-size:13px;color:var(--laranja);text-transform:uppercase}
+h1{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:clamp(36px,8vw,56px);line-height:1;margin:12px 0 18px}
+p{color:#cfccc6;font-size:18px;line-height:1.5}
+.ref{font-family:'Oswald',sans-serif;font-size:20px;color:var(--espuma);margin-top:18px}
+.acoes{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+a{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.14em;font-size:14px;padding:14px 20px;text-decoration:none}
+.wa{background:#1f8a4c;color:#fff}.vt{border:1px solid var(--espuma);color:var(--espuma)}
+</style>
+</head>
+<body>
+<main>
+  <div class="k">Phenix Teccel</div>
+  <h1 id="t">Pedido recebido.</h1>
+  <p id="m">Assim que o pagamento for confirmado, a gente separa o pedido e te chama no WhatsApp.</p>
+  <div class="ref" id="ref"></div>
+  <div class="acoes">
+    <a class="wa" id="wa" href="#" target="_blank" rel="noopener">Falar no WhatsApp</a>
+    <a class="vt" href="./#produtos">Voltar à loja</a>
+  </div>
+</main>
+<script src="config.js"></script>
+<script>
+const q = new URLSearchParams(location.search), st = q.get('status'), ref = (q.get('ref') || '').replace(/[^A-Z0-9-]/gi, '');
+const T = {
+  aprovado: ['Pagamento aprovado.', 'Recebemos seu pagamento. A gente separa o pedido e te chama no WhatsApp com o prazo.'],
+  pendente: ['Pagamento em análise.', 'Pix ou boleto podem levar alguns minutos para compensar. Assim que confirmar, a gente te avisa.'],
+  recusado: ['Pagamento não aprovado.', 'Nada foi cobrado. Tente outra forma de pagamento ou finalize com a gente pelo WhatsApp.'],
+  teste:    ['Pedido de teste.', 'Modo de teste ativo: nenhum pagamento foi feito. O pedido ficou registrado em api/pedidos-teste.log.'],
+};
+if (T[st]) { document.getElementById('t').textContent = T[st][0]; document.getElementById('m').textContent = T[st][1]; }
+if (ref) document.getElementById('ref').textContent = 'Pedido ' + ref;
+document.getElementById('wa').href = 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent('Oi! Fiz o pedido ' + ref + ' no site. Status: ' + (st || '') + '.');
+if (st !== 'recusado') { try { localStorage.removeItem('phx-carrinho'); } catch(e){} }
+</script>
+</body>
+</html>

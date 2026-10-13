@@ -144,12 +144,12 @@ h3{font-weight:600;font-size:21px;letter-spacing:.04em}
 /* ===== CARRINHO ===== */
 .fundo{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;opacity:0;visibility:hidden;transition:.25s}
 .fundo.aberto{opacity:1;visibility:visible}
-aside.carrinho{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--espuma);color:var(--preto);z-index:50;transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column}
+aside.carrinho{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--espuma);color:var(--preto);z-index:50;transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain}
 aside.carrinho.aberto{transform:none}
 .car-topo{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:3px solid var(--laranja)}
 .car-topo h3{font-size:24px}
 .car-topo button{font-size:28px;line-height:1}
-.car-itens{flex:1;overflow:auto;padding:8px 22px}
+.car-itens{flex:none;padding:8px 22px}
 .car-vazio{padding:40px 0;color:#5f5d59}
 .item{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:16px 0;border-bottom:1px solid #ddd8cf}
 .item .nome{font-family:'Oswald';font-size:17px;letter-spacing:.03em;text-transform:uppercase}
@@ -161,13 +161,34 @@ aside.carrinho.aberto{transform:none}
 .item .rem{font-size:13px;color:#7a776f;text-decoration:underline;margin-left:auto}
 .car-rodape{padding:18px 22px 22px;border-top:1px solid #ddd8cf;background:#fff}
 .car-rodape label{display:block;font-family:'Oswald';font-size:12px;letter-spacing:.18em;color:var(--brasa);margin:10px 0 4px;text-transform:uppercase}
-.car-rodape input,.car-rodape textarea,.car-rodape select{width:100%;border:1px solid #cfc9bf;padding:10px;font:inherit;font-size:15px;background:var(--espuma);border-radius:0}
+.car-rodape input,.car-rodape textarea,.car-rodape select{width:100%;border:1px solid #cfc9bf;padding:10px;font:inherit;font-size:16px;background:var(--espuma);color:var(--preto);border-radius:0;color-scheme:light}
+.car-rodape input::placeholder,.car-rodape textarea::placeholder{color:#8a867e}
+#cUF{text-transform:uppercase}
 .car-rodape textarea{resize:vertical;min-height:54px}
 .total{display:flex;justify-content:space-between;font-family:'Oswald';font-size:20px;margin:14px 0 4px;text-transform:uppercase}
 .total small{font-family:'Barlow';text-transform:none;font-size:13px;color:#6b6862;display:block}
 .car-rodape .btn{width:100%;margin-top:12px;background:#1f8a4c;color:#fff}
 .car-rodape .btn:hover{background:#176d3b}
 .car-rodape .btn.off{background:#b8b3aa;pointer-events:none}
+.linha-total{display:flex;justify-content:space-between;font-size:15px;color:#4a4740}
+.cep-linha{display:flex;gap:8px}
+.cep-linha input{flex:1}
+.btn-sec{font-family:'Oswald',sans-serif;letter-spacing:.12em;text-transform:uppercase;font-size:13px;padding:0 14px;border:1px solid var(--preto);color:var(--preto);background:transparent}
+.btn-sec:hover{background:var(--preto);color:var(--espuma)}
+.fretes{display:grid;gap:6px;margin-top:10px}
+.fretes label{display:flex;align-items:center;gap:10px;margin:0;padding:10px;border:1px solid #cfc9bf;background:var(--espuma);font-family:'Barlow',sans-serif;font-size:14px;letter-spacing:0;text-transform:none;color:var(--preto);cursor:pointer}
+.fretes label:has(input:checked){border-color:var(--brasa);box-shadow:inset 3px 0 0 var(--laranja)}
+.fretes input{width:auto;accent-color:var(--brasa)}
+.fretes .v{margin-left:auto;font-family:'Oswald',sans-serif;font-size:16px}
+.end-grid{display:grid;grid-template-columns:1fr 90px;gap:0 8px}
+.end-grid .cheio{grid-column:1/-1}
+.msg{display:block;font-size:13px;margin-top:6px;color:#6b6862}
+.msg.erro{color:#a1260d}
+.car-rodape .btn.pagar{background:var(--laranja);color:var(--preto)}
+.car-rodape .btn.pagar:hover{background:var(--pessego)}
+.pag-icones{display:block;text-align:center;font-size:12px;color:#6b6862;margin-top:6px}
+.ou{display:flex;align-items:center;gap:10px;margin:14px 0 0;font-size:12px;color:#8C8A86;font-family:'Oswald',sans-serif;letter-spacing:.2em;text-transform:uppercase}
+.ou::before,.ou::after{content:"";flex:1;height:1px;background:#ddd8cf}
 
 /* WhatsApp flutuante */
 .wa-flutua{position:fixed;right:20px;bottom:20px;z-index:30;width:58px;height:58px;border-radius:50%;background:#1f8a4c;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.4)}
@@ -342,18 +363,49 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
   <div class="car-topo"><h3>Seu pedido</h3><button id="fecharCar" aria-label="Fechar">×</button></div>
   <div class="car-itens" id="carItens"></div>
   <div class="car-rodape">
+    <div class="linha-total"><span>Produtos</span><span id="carSub">—</span></div>
+    <div class="linha-total" id="linhaFrete" hidden><span>Frete</span><span id="carFrete">—</span></div>
     <div class="total"><span>Total</span><span id="carTotal">—</span></div>
-    <small id="carObsTotal" style="font-size:13px;color:#6b6862"></small>
-    <label for="cNome">Seu nome</label>
-    <input id="cNome" autocomplete="name" placeholder="Nome / oficina">
+    <small id="carObsTotal" class="msg"></small>
+
     <label for="cEntrega">Entrega</label>
     <select id="cEntrega">
-      <option>Retirar na loja</option>
-      <option>Entrega (informar CEP)</option>
+      <option value="retirar">Retirar na loja (grátis)</option>
+      <option value="envio">Receber em casa (Correios e transportadoras)</option>
     </select>
+    <div id="boxEnvio" hidden>
+      <label for="cCep">CEP</label>
+      <div class="cep-linha"><input id="cCep" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000"><button type="button" class="btn-sec" id="calcFrete">Calcular frete</button></div>
+      <small id="freteMsg" class="msg"></small>
+      <div class="fretes" id="fretes"></div>
+    </div>
+
+    <label for="cNome">Nome</label>
+    <input id="cNome" autocomplete="name" placeholder="Nome / oficina">
+    <label for="cTel">WhatsApp</label>
+    <input id="cTel" type="tel" autocomplete="tel" inputmode="tel" placeholder="(11) 99999-9999">
+    <label for="cEmail">E-mail (opcional)</label>
+    <input id="cEmail" type="email" autocomplete="email" placeholder="para receber o comprovante">
+
+    <div id="boxEndereco" hidden>
+      <div class="end-grid">
+        <div class="cheio"><label for="cRua">Rua</label><input id="cRua" autocomplete="address-line1"></div>
+        <div><label for="cBairro">Bairro</label><input id="cBairro"></div>
+        <div><label for="cNum">Número</label><input id="cNum" inputmode="numeric"></div>
+        <div class="cheio"><label for="cCompl">Complemento</label><input id="cCompl" autocomplete="address-line2"></div>
+        <div><label for="cCidade">Cidade</label><input id="cCidade" autocomplete="address-level2"></div>
+        <div><label for="cUF">UF</label><input id="cUF" maxlength="2" autocomplete="address-level1"></div>
+      </div>
+    </div>
+
     <label for="cObs">Observações</label>
-    <textarea id="cObs" placeholder="CEP, prazo, dúvidas técnicas..."></textarea>
-    <a class="btn" id="finalizar" href="#" target="_blank" rel="noopener">Finalizar no WhatsApp</a>
+    <textarea id="cObs" placeholder="Prazo, dúvidas técnicas..."></textarea>
+
+    <button type="button" class="btn pagar" id="pagar">Pagar agora</button>
+    <span class="pag-icones">Pix · cartão em até 12x · boleto — pelo Mercado Pago</span>
+    <small id="pagarMsg" class="msg"></small>
+    <div class="ou">ou</div>
+    <a class="btn" id="finalizar" href="#" target="_blank" rel="noopener">Combinar pelo WhatsApp</a>
   </div>
 </aside>
 
@@ -363,9 +415,10 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
 
 <div class="toast" id="toast"></div>
 
-<script src="produtos.js"></script>
+<script src="config.js"></script>
 <script>
-(function(){
+function iniciaLoja(CAT){
+  const PRODUTOS = CAT.produtos, CATEGORIAS = CAT.categorias;
   const $ = s => document.querySelector(s);
   const brl = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
   const wa = txt => 'https://wa.me/' + CONFIG.whatsapp + (txt ? '?text=' + encodeURIComponent(txt) : '');
@@ -487,7 +540,8 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
   let car = [];
   try { car = JSON.parse(localStorage.getItem('phx-carrinho')||'[]'); } catch(e){ car = []; }
   car = car.filter(i => PRODUTOS.some(p => p.id === i.id));
-  const salva = () => { try{ localStorage.setItem('phx-carrinho', JSON.stringify(car)); }catch(e){} };
+  let freteSel = null;
+  const salva = () => { limpaFrete(); try{ localStorage.setItem('phx-carrinho', JSON.stringify(car)); }catch(e){} };
   const prod = id => PRODUTOS.find(p => p.id === id);
 
   function adiciona(id, op, qtd){
@@ -500,10 +554,10 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
     $('#qtdCar').textContent = n;
     if (!car.length){
       $('#carItens').innerHTML = '<div class="car-vazio">Carrinho vazio. Escolha os produtos e volte aqui.</div>';
-      $('#carTotal').textContent = '—'; $('#carObsTotal').textContent = '';
-      $('#finalizar').classList.add('off'); return;
+      $('#carTotal').textContent = '—'; $('#carSub').textContent = '—'; $('#carObsTotal').textContent = '';
+      $('#finalizar').classList.add('off'); $('#pagar').classList.add('off'); return;
     }
-    $('#finalizar').classList.remove('off'); atualizaLink();
+    $('#finalizar').classList.remove('off');
     let total = 0, consulta = 0;
     $('#carItens').innerHTML = car.map((i,idx) => {
       const p = prod(i.id), pr = precoDe(p, i.op); let val = 'Sob consulta';
@@ -515,8 +569,13 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
         <button class="rem">remover</button></div>
       </div>`;
     }).join('');
-    $('#carTotal').textContent = total ? brl(total) + (consulta ? ' +' : '') : 'A confirmar';
-    $('#carObsTotal').textContent = consulta ? `${consulta} item(ns) com preço sob consulta. Valor final e frete confirmados no WhatsApp.` : 'Frete confirmado no WhatsApp.';
+    const envio = $('#cEntrega').value === 'envio';
+    $('#carSub').textContent = total ? brl(total) + (consulta ? ' +' : '') : 'A confirmar';
+    $('#linhaFrete').hidden = !envio;
+    $('#carFrete').textContent = freteSel ? brl(freteSel.preco) : 'calcule pelo CEP';
+    $('#carTotal').textContent = total ? brl(total + (envio && freteSel ? freteSel.preco : 0)) + (consulta ? ' +' : '') : 'A confirmar';
+    $('#carObsTotal').textContent = consulta ? `${consulta} item(ns) sob consulta: esses pedidos fecham pelo WhatsApp.` : '';
+    estadoPagar(consulta); atualizaLink();
   }
   $('#carItens').addEventListener('click', e => {
     const it = e.target.closest('.item'); if(!it) return;
@@ -529,7 +588,9 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
 
   function atualizaLink(){
     if (!car.length) return;
-    const nome = $('#cNome').value.trim(), ent = $('#cEntrega').value, obs = $('#cObs').value.trim();
+    const nome = $('#cNome').value.trim(), obs = $('#cObs').value.trim();
+    const envio = $('#cEntrega').value === 'envio';
+    const ent = envio ? 'Receber em casa' + ($('#cCep').value ? ', CEP ' + $('#cCep').value : '') + (freteSel ? ` (${freteSel.empresa} ${freteSel.nome}: ${brl(freteSel.preco)})` : '') : 'Retirar na loja';
     let total = 0, consulta = false;
     const linhas = car.map(i => {
       const p = prod(i.id), pr = precoDe(p, i.op);
@@ -547,8 +608,83 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
     ].filter((l,i,a) => l!=='' || a[i-1]!=='').join('\n');
     $('#finalizar').href = wa(msg);
   }
-  ['#cNome','#cEntrega','#cObs'].forEach(id => $(id).addEventListener('input', atualizaLink));
-  $('#cEntrega').addEventListener('change', atualizaLink);
+  ['#cNome','#cObs','#cCep'].forEach(id => $(id).addEventListener('input', atualizaLink));
+
+  /* ===== frete (Melhor Envio) e pagamento (Mercado Pago) via api/ ===== */
+  const API = 'api/';
+  const dig = v => String(v).replace(/\D/g, '');
+  const itensApi = () => car.map(i => ({ id: i.id, op: i.op, qtd: i.qtd }));
+  const msg = (el, t, erro) => { el.textContent = t || ''; el.classList.toggle('erro', !!erro); };
+  async function post(url, dados){
+    if (window.DEMO) return window.DEMO(url, dados, { PRODUTOS, CAT, brl, prod, precoDe });
+    const r = await fetch(API + url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
+    let j = null; try { j = await r.json(); } catch(e){}
+    if (!r.ok || !j) throw new Error((j && j.erro) || 'Serviço indisponível agora. Finalize pelo WhatsApp.');
+    return j;
+  }
+  function limpaFrete(){ freteSel = null; const f = $('#fretes'); if (f) f.innerHTML = ''; }
+  function estadoPagar(consulta){
+    const b = $('#pagar'), envio = $('#cEntrega').value === 'envio';
+    let motivo = '';
+    if (!CONFIG.pagamentoOnline) motivo = 'Pagamento online desativado. Finalize pelo WhatsApp.';
+    else if (consulta) motivo = 'Há item sob consulta no carrinho: finalize pelo WhatsApp.';
+    else if (envio && !freteSel) motivo = 'Calcule e escolha o frete para pagar.';
+    b.classList.toggle('off', !!motivo);
+    if (!$('#pagarMsg').classList.contains('erro') || !motivo) msg($('#pagarMsg'), motivo);
+  }
+  $('#cEntrega').addEventListener('change', () => {
+    const envio = $('#cEntrega').value === 'envio';
+    $('#boxEnvio').hidden = !envio; $('#boxEndereco').hidden = !envio;
+    if (!envio) limpaFrete();
+    renderCar();
+  });
+  $('#cCep').addEventListener('input', e => {
+    const d = dig(e.target.value).slice(0, 8);
+    e.target.value = d.length > 5 ? d.slice(0,5) + '-' + d.slice(5) : d;
+    if (freteSel) { limpaFrete(); renderCar(); }
+  });
+  $('#cCep').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#calcFrete').click(); } });
+  $('#calcFrete').addEventListener('click', async () => {
+    const cep = dig($('#cCep').value), m = $('#freteMsg');
+    limpaFrete(); renderCar();
+    if (cep.length !== 8) return msg(m, 'Digite o CEP com 8 números.', true);
+    if (!car.length) return msg(m, 'Carrinho vazio.', true);
+    msg(m, 'Calculando...');
+    fetch('https://viacep.com.br/ws/' + cep + '/json/').then(r => r.json()).then(e => {
+      if (e.erro) return;
+      if (!$('#cRua').value) $('#cRua').value = e.logradouro || '';
+      if (!$('#cBairro').value) $('#cBairro').value = e.bairro || '';
+      $('#cCidade').value = e.localidade || $('#cCidade').value; $('#cUF').value = e.uf || $('#cUF').value;
+    }).catch(() => {});
+    try {
+      const r = await post('frete.php', { cep, itens: itensApi() });
+      msg(m, r.teste ? 'Valores simulados (modo de teste).' : 'Escolha a entrega:');
+      $('#fretes').innerHTML = r.opcoes.map((o, k) => `<label><input type="radio" name="frete" value="${k}">
+        <span>${esc(o.empresa)} ${esc(o.nome)}<br><small>${o.prazo} dia${o.prazo === 1 ? '' : 's'} úte${o.prazo === 1 ? 'l' : 'is'}</small></span>
+        <span class="v">${brl(o.preco)}</span></label>`).join('');
+      $('#fretes').onchange = ev => { freteSel = r.opcoes[+ev.target.value]; renderCar(); };
+    } catch (err) { msg(m, err.message, true); }
+  });
+  $('#pagar').addEventListener('click', async () => {
+    const pm = $('#pagarMsg'), envio = $('#cEntrega').value === 'envio';
+    const cliente = { nome: $('#cNome').value.trim(), telefone: $('#cTel').value.trim(), email: $('#cEmail').value.trim(),
+      cep: $('#cCep').value, rua: $('#cRua').value.trim(), numero: $('#cNum').value.trim(), complemento: $('#cCompl').value.trim(),
+      bairro: $('#cBairro').value.trim(), cidade: $('#cCidade').value.trim(), uf: $('#cUF').value.trim().toUpperCase() };
+    if (!cliente.nome) return msg(pm, 'Informe seu nome.', true), $('#cNome').focus();
+    if (dig(cliente.telefone).length < 10) return msg(pm, 'Informe seu WhatsApp com DDD.', true), $('#cTel').focus();
+    if (envio && !(cliente.rua && cliente.numero && cliente.bairro && cliente.cidade && cliente.uf))
+      return msg(pm, 'Preencha o endereço de entrega.', true), $('#cRua').focus();
+    const b = $('#pagar'); b.classList.add('off'); b.textContent = 'Abrindo pagamento...'; msg(pm, '');
+    try {
+      const r = await post('checkout.php', { itens: itensApi(), entrega: envio ? 'envio' : 'retirar',
+        servico: freteSel ? freteSel.id : null, cliente, obs: $('#cObs').value.trim() });
+      try { localStorage.setItem('phx-ultimo-pedido', JSON.stringify({ ref: r.ref, total: r.total })); } catch(e){}
+      if (r.demo) { b.classList.remove('off'); return window.DEMO_PAGAR(r); }
+      location.href = r.url;
+    } catch (err) {
+      msg(pm, err.message, true); b.classList.remove('off');
+    } finally { b.textContent = 'Pagar agora'; }
+  });
 
   const abreCar = () => { $('#carrinho').classList.add('aberto'); $('#fundo').classList.add('aberto'); };
   const fechaCar = () => { $('#carrinho').classList.remove('aberto'); $('#fundo').classList.remove('aberto'); };
@@ -558,7 +694,12 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
   let tt; function aviso(t){ const el=$('#toast'); el.textContent=t; el.classList.add('ver'); clearTimeout(tt); tt=setTimeout(()=>el.classList.remove('ver'),1800); }
 
   montaFiltros(); montaGrade(); renderCar();
-})();
+}
+if (window.CATALOGO) iniciaLoja(window.CATALOGO);
+else fetch('produtos.json', { cache: 'no-cache' }).then(r => r.json()).then(iniciaLoja).catch(() => {
+  document.getElementById('abertura').classList.add('saiu');
+  document.querySelector('main').insertAdjacentHTML('afterbegin', '<p class="nota" style="padding:24px">Não foi possível carregar o catálogo. Recarregue a página ou chame no WhatsApp.</p>');
+});
 </script>
 </body>
 </html>

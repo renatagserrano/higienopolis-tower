@@ -1,0 +1,5 @@
+# Bloqueia acesso direto aos arquivos internos
+<FilesMatch "^(config|lib)\.php$|\.log$">
+  Require all denied
+</FilesMatch>
+Options -Indexes
