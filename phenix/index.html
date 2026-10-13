@@ -98,24 +98,29 @@ h3{font-weight:600;font-size:21px;letter-spacing:.04em}
 .atalhos button:hover,.atalhos button.ativo{border-color:var(--laranja);color:var(--laranja)}
 
 /* ===== PRODUTOS ===== */
-.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px;margin-top:36px;max-width:1000px}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:22px;margin-top:36px;max-width:1000px}
 .card{background:var(--grafite);border:1px solid var(--linha);display:flex;flex-direction:column}
-.card .vitrine{position:relative;aspect-ratio:16/10;background:var(--preto);display:flex;align-items:flex-end;padding:18px 18px 16px 34px;overflow:hidden}
-.card .vitrine::before{content:"";position:absolute;left:18px;top:0;bottom:0;width:2px;background:var(--laranja)}
-.card .vitrine img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.6)}
+.card .vitrine{position:relative;aspect-ratio:1/1;max-width:100%;background:var(--preto);display:flex;align-items:flex-end;padding:18px 18px 16px 34px;overflow:hidden}
+.card .vitrine::before{content:"";position:absolute;left:18px;top:0;bottom:0;width:2px;background:var(--laranja);z-index:1}
+.card .vitrine img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .card .medida{position:relative;font-family:'Oswald';font-weight:700;font-size:clamp(56px,7vw,78px);line-height:.9;color:var(--laranja)}
-.card .vitrine .tag{position:absolute;top:16px;left:34px}
+.card .vitrine .tag{position:absolute;top:16px;left:34px;z-index:2}
+.card .preco small{font-family:'Barlow',sans-serif;font-size:14px;color:var(--po);text-transform:none;letter-spacing:0}
+.busca{margin-top:16px;width:100%;max-width:420px;background:transparent;border:1px solid var(--linha);color:inherit;padding:12px 14px;font:inherit;font-size:16px;border-radius:0}
+.busca:focus{outline:2px solid var(--laranja);outline-offset:1px}
+.areia .busca{border-color:var(--borda);background:var(--cartao)}
+@media(max-width:560px){#filtros{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;margin-inline:-16px;padding-inline:16px}#filtros button{flex:none}.grade{grid-template-columns:1fr 1fr;gap:12px}.card .info{padding:12px;gap:8px}.card h3{font-size:16px}.card .desc{display:none}.linha-qtd{flex-wrap:wrap}.linha-qtd .qtdbox{width:100%;justify-content:space-between}.linha-qtd .btn{width:100%}.card .medida{font-size:40px}}
 .card .info{padding:18px;display:flex;flex-direction:column;gap:10px;flex:1}
 .card .cat{font-family:'Oswald';letter-spacing:.18em;font-size:12px;color:var(--po)}
 .card .desc{font-size:15px;color:#cfccc6;flex:1}
 .card .preco{font-family:'Oswald';font-size:22px;color:var(--espuma)}
 .card .preco.consulta{font-size:15px;letter-spacing:.12em;color:var(--pessego)}
 .card select{width:100%;background:var(--preto);color:var(--espuma);border:1px solid var(--linha);padding:10px;font:inherit;font-size:15px;border-radius:0}
-.linha-qtd{display:flex;gap:10px}
+.linha-qtd{display:flex;flex-wrap:wrap;gap:10px}
 .qtdbox{display:flex;border:1px solid var(--linha)}
 .qtdbox button{width:36px;font-size:18px}
 .qtdbox input{width:42px;text-align:center;background:none;border:0;color:var(--espuma);font:inherit}
-.linha-qtd .btn{flex:1;padding:12px 10px;font-size:14px}
+.linha-qtd .btn{flex:1 1 110px;padding:12px 10px;font-size:14px}
 .card .add{font-family:'Oswald';letter-spacing:.14em;font-size:13px;color:var(--laranja);text-align:left;padding:4px 0}
 .card .add:hover{color:var(--pessego)}
 
@@ -271,8 +276,9 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
     <div class="kicker">Produtos</div>
     <h2>Diz o que tem<br>e quanto mede.</h2>
     <div class="atalhos" id="filtros"></div>
+    <input class="busca" id="busca" type="search" placeholder="Buscar produto: quilha, lixa, carbono..." aria-label="Buscar produto">
     <div class="grade" id="grade"></div>
-    <p class="nota">Preço e disponibilidade confirmados no WhatsApp antes do pagamento.</p>
+    <p class="nota">Preços do catálogo Phenix. Estoque e frete confirmados no WhatsApp antes do pagamento.</p>
   </section>
 
   <!-- COMO PEDIR -->
@@ -369,7 +375,7 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
   document.querySelectorAll('.wa-link').forEach(a => a.href = wa(saudacao));
   $('#cEnd').textContent = CONFIG.endereco;
   $('#cHor').textContent = CONFIG.horario;
-  $('#fEnd').textContent = CONFIG.endereco;
+  $('#fEnd').textContent = CONFIG.endereco + (CONFIG.email ? ' · ' + CONFIG.email : '');
   $('#cInsta').href = CONFIG.instagram;
 
   /* ===== abertura ===== */
@@ -420,29 +426,46 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function tagHtml(t){ if(!t) return ''; const cls = t==='TÉCNICA' ? 'tag mar' : 'tag'; return `<span class="${cls}">${esc(t)}</span>`; }
 
+  const sem = t => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const opNome = o => typeof o === 'string' ? o : o.nome;
+  function precoDe(p, op){
+    const o = (p.opcoes||[]).find(o => typeof o !== 'string' && o.nome === op);
+    return o ? o.preco : (p.preco ?? null);
+  }
+  const unTxt = p => p.un === 'm' ? '/m' : p.un === 'jd' ? '/jd' : '';
+  const qtdTxt = (p, q) => p.un === 'm' ? q + ' m' : p.un === 'jd' ? q + ' jd' : q + 'x';
+  const imgDe = p => p.img === true ? 'img/produtos/' + p.id + '.jpg' : p.img;
+  const precoHtml = (p, op) => { const v = precoDe(p, op); return v != null ? `${brl(v)} <small>${unTxt(p)}</small>` : 'Sob consulta'; };
+  let busca = '';
+  $('#busca').addEventListener('input', e => { busca = sem(e.target.value.trim()); montaGrade(); });
+
   function montaGrade(){
-    const lista = PRODUTOS.filter(p => filtro==='Todos' || p.categoria===filtro);
+    const lista = PRODUTOS.filter(p => (filtro==='Todos' || p.categoria===filtro) && (!busca || sem(p.nome + ' ' + p.categoria).includes(busca)));
     $('#grade').innerHTML = lista.map(p => `
       <article class="card" data-id="${esc(p.id)}">
         <div class="vitrine">
-          ${p.img ? `<img src="${esc(p.img)}" alt="">` : ''}
+          ${p.img ? `<img src="${esc(imgDe(p))}" alt="${esc(p.nome)}" loading="lazy">` : `<div class="medida">${esc(p.destaque||'')}</div>`}
           ${tagHtml(p.tag)}
-          <div class="medida">${esc(p.destaque||'')}</div>
         </div>
         <div class="info">
           <div class="cat">${esc(p.categoria)}</div>
           <h3>${esc(p.nome)}</h3>
           <p class="desc">${esc(p.desc||'')}</p>
-          ${p.preco!=null ? `<div class="preco">${brl(p.preco)}</div>` : `<div class="preco consulta">Sob consulta</div>`}
-          ${p.opcoes && p.opcoes.length ? `<select aria-label="Opção">${p.opcoes.map(o=>`<option>${esc(o)}</option>`).join('')}</select>` : ''}
+          <div class="preco${precoDe(p, p.opcoes ? opNome(p.opcoes[0]) : '') == null ? ' consulta' : ''}">${precoHtml(p, p.opcoes ? opNome(p.opcoes[0]) : '')}</div>
+          ${p.opcoes && p.opcoes.length ? `<select aria-label="Opção">${p.opcoes.map(o=>`<option>${esc(opNome(o))}</option>`).join('')}</select>` : ''}
           <div class="linha-qtd">
             <div class="qtdbox"><button data-q="-1" aria-label="Menos">−</button><input value="1" inputmode="numeric" aria-label="Quantidade"><button data-q="1" aria-label="Mais">+</button></div>
             <button class="btn btn-laranja comprar">Comprar</button>
           </div>
           <button class="add">+ Adicionar ao carrinho</button>
         </div>
-      </article>`).join('') || '<p class="nota">Nenhum produto nesta categoria.</p>';
+      </article>`).join('') || '<p class="nota">Nenhum produto encontrado. Chama no WhatsApp que a gente procura.</p>';
   }
+  $('#grade').addEventListener('change', e => {
+    if (!e.target.matches('select')) return;
+    const card = e.target.closest('.card'), p = prod(card.dataset.id);
+    card.querySelector('.preco').innerHTML = precoHtml(p, e.target.value);
+  });
 
   $('#grade').addEventListener('click', e => {
     const card = e.target.closest('.card'); if(!card) return;
@@ -451,9 +474,12 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
     if (q) { inp.value = Math.max(1, (parseInt(inp.value)||1) + +q.dataset.q); return; }
     const comprar = e.target.closest('.comprar'), add = e.target.closest('.add');
     if (!comprar && !add) return;
-    const sel = card.querySelector('select');
-    adiciona(card.dataset.id, sel ? sel.value : '', Math.max(1, parseInt(inp.value)||1));
-    if (comprar) abreCar(); else aviso('Adicionado ao carrinho');
+    const sel = card.querySelector('select'), p = prod(card.dataset.id), op = sel ? sel.value : '';
+    const o = (p.opcoes||[]).find(o => typeof o !== 'string' && o.nome === op);
+    let qtd = Math.max(1, parseInt(inp.value)||1);
+    if (o && o.min && qtd < o.min) { qtd = o.min; aviso('Mínimo de ' + o.min + ' nesta opção'); }
+    adiciona(card.dataset.id, op, qtd);
+    if (comprar) abreCar(); else if (!(o && o.min && qtd === o.min)) aviso('Adicionado ao carrinho');
     inp.value = 1;
   });
 
@@ -480,12 +506,12 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
     $('#finalizar').classList.remove('off'); atualizaLink();
     let total = 0, consulta = 0;
     $('#carItens').innerHTML = car.map((i,idx) => {
-      const p = prod(i.id); let val = 'Sob consulta';
-      if (p.preco!=null){ total += p.preco*i.qtd; val = brl(p.preco*i.qtd); } else consulta++;
+      const p = prod(i.id), pr = precoDe(p, i.op); let val = 'Sob consulta';
+      if (pr!=null){ total += pr*i.qtd; val = brl(pr*i.qtd); } else consulta++;
       return `<div class="item" data-i="${idx}">
         <div><div class="nome">${esc(p.nome)}</div>${i.op?`<div class="var">${esc(i.op)}</div>`:''}</div>
         <div class="valor">${val}</div>
-        <div class="ctrl"><div class="qtdbox"><button data-cq="-1" aria-label="Menos">−</button><input value="${i.qtd}" readonly aria-label="Quantidade"><button data-cq="1" aria-label="Mais">+</button></div>
+        <div class="ctrl"><div class="qtdbox"><button data-cq="-1" aria-label="Menos">−</button><input value="${esc(qtdTxt(p, i.qtd))}" readonly aria-label="Quantidade" style="width:56px"><button data-cq="1" aria-label="Mais">+</button></div>
         <button class="rem">remover</button></div>
       </div>`;
     }).join('');
@@ -506,10 +532,10 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
     const nome = $('#cNome').value.trim(), ent = $('#cEntrega').value, obs = $('#cObs').value.trim();
     let total = 0, consulta = false;
     const linhas = car.map(i => {
-      const p = prod(i.id);
+      const p = prod(i.id), pr = precoDe(p, i.op);
       let v = 'sob consulta';
-      if (p.preco!=null){ total += p.preco*i.qtd; v = brl(p.preco*i.qtd); } else consulta = true;
-      return `• ${i.qtd}x ${p.nome}${i.op?' ('+i.op+')':''} — ${v}`;
+      if (pr!=null){ total += pr*i.qtd; v = brl(pr*i.qtd); } else consulta = true;
+      return `• ${qtdTxt(p, i.qtd)} ${p.nome}${i.op?' ('+i.op+')':''} — ${v}`;
     });
     const msg = [
       'Oi! Aqui é ' + (nome || 'cliente do site') + '. Quero fazer este pedido:',
