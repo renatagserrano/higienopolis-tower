@@ -29,6 +29,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 #abertura img{width:min(320px,62vw);height:auto;cursor:pointer;animation:surge 1.2s ease-out both}
 #abertura .entrar{font-family:'Oswald';letter-spacing:.3em;font-size:13px;color:var(--po);animation:pulsa 2s 1.2s infinite both}
 #abertura .video{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+#abertura .video video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #abertura .video iframe{position:absolute;top:50%;left:50%;width:100vw;height:56.25vw;min-height:100vh;min-width:177.78vh;transform:translate(-50%,-50%);border:0}
 #abertura .video::after{content:"";position:absolute;inset:0;background:rgba(10,10,11,.55)}
 .areia #abertura .video::after{background:rgba(234,223,203,.5)}
@@ -440,10 +441,12 @@ function iniciaLoja(CAT){
   if (['#produtos','#como-pedir','#contato'].includes(location.hash)) ab.classList.add('saiu');
 
   /* vídeo de fundo da abertura (YouTube, mudo, em loop) */
-  if (CONFIG.videoAbertura && !ab.classList.contains('saiu')) {
+  if ((CONFIG.videoArquivo || CONFIG.videoAbertura) && !ab.classList.contains('saiu')) {
     const v = CONFIG.videoAbertura, box = document.createElement('div');
     box.className = 'video';
-    box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v)}?autoplay=1&mute=1&loop=1&playlist=${encodeURIComponent(v)}&controls=0&playsinline=1&modestbranding=1&rel=0" title="Vídeo Phenix" allow="autoplay; encrypted-media" tabindex="-1"></iframe>`;
+    box.innerHTML = CONFIG.videoArquivo
+      ? `<video src="${CONFIG.videoArquivo}" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>`
+      : `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(v)}?autoplay=1&mute=1&loop=1&playlist=${encodeURIComponent(v)}&controls=0&playsinline=1&modestbranding=1&rel=0" title="Vídeo Phenix" allow="autoplay; encrypted-media" tabindex="-1"></iframe>`;
     ab.prepend(box);
     ab.addEventListener('transitionend', () => { if (ab.classList.contains('saiu')) box.remove(); }, { once: true });
   }

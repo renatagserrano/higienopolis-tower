@@ -13,6 +13,9 @@ const CONFIG = {
   instagram: 'https://instagram.com/phenixteccel',
   // Vídeo de fundo da abertura (ID do YouTube). Deixe '' para só o logo.
   videoAbertura: 'vnHKiPKlzZk',
+  // Vídeo da abertura como arquivo (melhor que YouTube: sem logo/controles do YouTube).
+  // Ex.: 'video/abertura.mp4'. Quando preenchido, substitui o YouTube.
+  videoArquivo: '',
   // Frete pelo Melhor Envio e pagamento pelo Mercado Pago (precisa da pasta api/ no servidor).
   // false = carrinho só finaliza pelo WhatsApp.
   pagamentoOnline: true,
