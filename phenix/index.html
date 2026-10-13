@@ -176,6 +176,9 @@ footer div{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 24
 /* ===== VERSÃO AREIA (body.areia) ===== */
 body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;--borda:#D2C3A9;--txt2:#4A4740;background:var(--areia);color:var(--preto)}
 .areia #abertura{background:var(--areia)}
+#abertura .logo-areia{display:none;width:min(440px,80vw)}
+.areia #abertura .logo-preta{display:none}
+.areia #abertura .logo-areia{display:block}
 .areia #abertura .entrar{color:var(--txt2)}
 .areia .prancha{opacity:1}
 .areia .prancha ellipse{stroke:var(--grafite)}
@@ -216,7 +219,8 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
 
 <!-- ABERTURA: só o logo atual -->
 <div id="abertura" role="button" tabindex="0" aria-label="Entrar no site">
-  <img src="img/logo-phenix-teccel.png" alt="Phenix Teccel">
+  <img class="logo-preta" src="img/logo-phenix-teccel.png" alt="Phenix Teccel">
+  <img class="logo-areia" src="img/logo-phenix-teccel-areia.png" alt="Phenix Teccel">
   <span class="entrar">ENTRAR</span>
 </div>
 
