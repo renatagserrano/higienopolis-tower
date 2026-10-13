@@ -168,6 +168,42 @@ aside.carrinho.aberto{transform:none}
 
 footer{position:relative;z-index:1;border-top:1px solid var(--grafite);padding:28px 24px;font-size:13px;letter-spacing:.14em;color:var(--po);font-family:'Oswald';text-transform:uppercase}
 footer div{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+/* ===== VERSÃO AREIA (body.areia) ===== */
+body.areia{--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;--borda:#D2C3A9;--txt2:#4A4740;background:var(--areia);color:var(--preto)}
+.areia #abertura{background:var(--areia)}
+.areia #abertura .entrar{color:var(--txt2)}
+.areia .prancha{opacity:1}
+.areia .prancha ellipse{stroke:var(--grafite)}
+.areia header{background:rgba(234,223,203,.94);border-bottom-color:var(--borda)}
+.areia .nav a{color:var(--txt2)}
+.areia .nav a.ativo,.areia .nav a:hover{color:var(--preto)}
+.areia .btn-carrinho{border-color:var(--preto);color:var(--preto)}
+.areia h1,.areia h2{color:var(--preto)}
+.areia .kicker,.areia .tag.contorno{color:var(--brasa)}
+.areia .tag.contorno{border-color:var(--brasa)}
+.areia .lead{color:var(--txt2)}
+.areia .nota{color:#6E6A62}
+.areia .btn-contorno{border-color:var(--preto);color:var(--preto)}
+.areia .btn-contorno:hover{background:var(--preto);color:var(--areia)}
+.areia .pilar,.areia .passo,.areia .bloco-info,.areia .card{background:var(--cartao);border-color:var(--borda)}
+.areia .pilar p,.areia .passo p,.areia .lista li,.areia .card .desc{color:var(--txt2)}
+.areia .passo .n{color:var(--brasa)}
+.areia .pagina h3[style]{color:var(--brasa)!important}
+.areia .atalhos button{border-color:var(--borda);color:var(--preto)}
+.areia .atalhos button:hover,.areia .atalhos button.ativo{border-color:var(--brasa);color:var(--brasa)}
+.areia .card .vitrine{background:var(--areia2)}
+.areia .card .medida{color:var(--preto)}
+.areia .card .cat{color:#7A756B}
+.areia .card .preco{color:var(--preto)}
+.areia .card .preco.consulta{color:var(--brasa)}
+.areia .card select{background:#fff;color:var(--preto);border-color:var(--borda)}
+.areia .qtdbox{border-color:var(--borda)}
+.areia .qtdbox input{color:var(--preto)}
+.areia .card .add{color:var(--brasa)}
+.areia .card .add:hover{color:var(--preto)}
+.areia footer{border-top-color:var(--borda);color:#7A756B}
+.areia aside.carrinho{background:var(--cartao)}
+@media(max-width:760px){.areia .nav .links{background:var(--areia);border-bottom-color:var(--borda)}.areia .prancha{opacity:.45}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -341,6 +377,7 @@ footer div{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 24
     const h = location.hash.replace('#','');
     if (h === 'inicio') { ab.classList.remove('saiu'); return; }
     const p = paginas.includes(h) ? h : 'loja';
+    if (h) ab.classList.add('saiu');
     document.querySelectorAll('.pagina').forEach(s => s.classList.toggle('ativa', s.id === 'p-'+p));
     document.querySelectorAll('.nav a').forEach(a => a.classList.toggle('ativo', a.dataset.p === p));
     $('#links').classList.remove('aberto');
