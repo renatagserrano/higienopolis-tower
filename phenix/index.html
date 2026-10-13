@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
+  color-scheme:dark;
   --preto:#0A0A0B; --laranja:#F19E38; --pessego:#F6CFAE; --espuma:#F5F2EC;
   --grafite:#26262A; --brasa:#9A5208; --po:#8C8A86; --mar:#155E75;
   --linha:#3a3a40;
@@ -36,7 +37,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 @media(max-width:760px){.prancha{right:-70px;opacity:.35}}
 
 /* ===== NAV ===== */
-header{position:sticky;top:0;z-index:20;background:rgba(10,10,11,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--grafite)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(10,10,11,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--grafite)}
 .nav{max-width:1200px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;gap:28px}
 .nav a{text-decoration:none;font-size:15px;letter-spacing:.12em;color:var(--po);padding:6px 0;border-bottom:2px solid transparent}
 .nav a.ativo,.nav a:hover{color:var(--espuma);border-color:var(--laranja)}
@@ -155,7 +156,7 @@ aside.carrinho.aberto{transform:none}
 .total small{font-family:'Barlow';text-transform:none;font-size:13px;color:#6b6862;display:block}
 .car-rodape .btn{width:100%;margin-top:12px;background:#1f8a4c;color:#fff}
 .car-rodape .btn:hover{background:#176d3b}
-.car-rodape .btn:disabled{background:#b8b3aa;cursor:not-allowed}
+.car-rodape .btn.off{background:#b8b3aa;pointer-events:none}
 
 /* WhatsApp flutuante */
 .wa-flutua{position:fixed;right:20px;bottom:20px;z-index:30;width:58px;height:58px;border-radius:50%;background:#1f8a4c;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.4)}
@@ -301,7 +302,7 @@ footer div{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 24
     </select>
     <label for="cObs">Observações</label>
     <textarea id="cObs" placeholder="CEP, prazo, dúvidas técnicas..."></textarea>
-    <button class="btn" id="finalizar">Finalizar no WhatsApp</button>
+    <a class="btn" id="finalizar" href="#" target="_blank" rel="noopener">Finalizar no WhatsApp</a>
   </div>
 </aside>
 
@@ -419,9 +420,9 @@ footer div{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 24
     if (!car.length){
       $('#carItens').innerHTML = '<div class="car-vazio">Carrinho vazio. Escolha os produtos e volte aqui.</div>';
       $('#carTotal').textContent = '—'; $('#carObsTotal').textContent = '';
-      $('#finalizar').disabled = true; return;
+      $('#finalizar').classList.add('off'); return;
     }
-    $('#finalizar').disabled = false;
+    $('#finalizar').classList.remove('off'); atualizaLink();
     let total = 0, consulta = 0;
     $('#carItens').innerHTML = car.map((i,idx) => {
       const p = prod(i.id); let val = 'Sob consulta';
@@ -445,7 +446,7 @@ footer div{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 24
     salva(); renderCar();
   });
 
-  $('#finalizar').onclick = () => {
+  function atualizaLink(){
     if (!car.length) return;
     const nome = $('#cNome').value.trim(), ent = $('#cEntrega').value, obs = $('#cObs').value.trim();
     let total = 0, consulta = false;
@@ -463,8 +464,10 @@ footer div{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 24
       obs ? 'Obs.: ' + obs : '',
       '', 'Pode confirmar disponibilidade e valor?'
     ].filter((l,i,a) => l!=='' || a[i-1]!=='').join('\n');
-    window.open(wa(msg), '_blank', 'noopener');
-  };
+    $('#finalizar').href = wa(msg);
+  }
+  ['#cNome','#cEntrega','#cObs'].forEach(id => $(id).addEventListener('input', atualizaLink));
+  $('#cEntrega').addEventListener('change', atualizaLink);
 
   const abreCar = () => { $('#carrinho').classList.add('aberto'); $('#fundo').classList.add('aberto'); };
   const fechaCar = () => { $('#carrinho').classList.remove('aberto'); $('#fundo').classList.remove('aberto'); };
