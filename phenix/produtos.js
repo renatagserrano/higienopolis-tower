@@ -5,7 +5,7 @@
 
 const CONFIG = {
   // Número do WhatsApp com DDI + DDD, só dígitos. Ex.: 5511999998888
-  whatsapp: '5511900000000', // TROCAR PELO NÚMERO REAL
+  whatsapp: '5511999405627', // (11) 99940-5627
   endereco: 'Rua Paulo de Morais, 97 · São Paulo',
   horario: 'Seg a qui 8h–18h · Sex 8h–17h',
   instagram: 'https://instagram.com/phenixteccel',
