@@ -370,11 +370,11 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
 
   /* ===== abertura ===== */
   const ab = $('#abertura');
-  const entrar = () => { ab.classList.add('saiu'); try{sessionStorage.setItem('phx-entrou','1')}catch(e){} if(!location.hash) location.hash = '#loja'; };
+  const entrar = () => { ab.classList.add('saiu'); if (location.hash !== '#loja') location.hash = '#loja'; };
   ab.addEventListener('click', entrar);
   ab.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') entrar(); });
-  let jaEntrou = false; try{ jaEntrou = sessionStorage.getItem('phx-entrou')==='1'; }catch(e){}
-  if (jaEntrou || (location.hash && location.hash !== '#inicio')) ab.classList.add('saiu');
+  /* a abertura com vídeo aparece sempre que o site é aberto; só link direto para uma página interna pula */
+  if (['#produtos','#como-pedir','#contato'].includes(location.hash)) ab.classList.add('saiu');
 
   /* vídeo de fundo da abertura (YouTube, mudo, em loop) */
   if (CONFIG.videoAbertura && !ab.classList.contains('saiu')) {
@@ -391,7 +391,7 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
     const h = location.hash.replace('#','');
     if (h === 'inicio') { ab.classList.remove('saiu'); return; }
     const p = paginas.includes(h) ? h : 'loja';
-    if (h) ab.classList.add('saiu');
+    if (h && h !== 'loja') ab.classList.add('saiu');
     document.querySelectorAll('.pagina').forEach(s => s.classList.toggle('ativa', s.id === 'p-'+p));
     document.querySelectorAll('.nav a').forEach(a => a.classList.toggle('ativo', a.dataset.p === p));
     $('#links').classList.remove('aberto');
