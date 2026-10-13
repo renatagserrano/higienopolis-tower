@@ -9,6 +9,8 @@ const CONFIG = {
   endereco: 'Rua Paulo de Morais, 97 · São Paulo',
   horario: 'Seg a qui 8h–18h · Sex 8h–17h',
   instagram: 'https://instagram.com/phenixteccel',
+  // Vídeo de fundo da abertura (ID do YouTube). Deixe '' para só o logo.
+  videoAbertura: 'vnHKiPKlzZk',
 };
 
 /* Categorias = mesmas do catálogo do WhatsApp (guia, p. 13) */
