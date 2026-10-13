@@ -14,6 +14,7 @@
   --preto:#0A0A0B; --laranja:#F19E38; --pessego:#F6CFAE; --espuma:#F5F2EC;
   --grafite:#26262A; --brasa:#9A5208; --po:#8C8A86; --mar:#155E75;
   --linha:#3a3a40;
+  --vitrine:#E0D2BA;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -100,10 +101,10 @@ h3{font-weight:600;font-size:21px;letter-spacing:.04em}
 /* ===== PRODUTOS ===== */
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:22px;margin-top:36px;max-width:1000px}
 .card{background:var(--grafite);border:1px solid var(--linha);display:flex;flex-direction:column}
-.card .vitrine{position:relative;aspect-ratio:1/1;max-width:100%;background:var(--preto);display:flex;align-items:flex-end;padding:18px 18px 16px 34px;overflow:hidden}
+.card .vitrine{position:relative;aspect-ratio:1/1;max-width:100%;background:var(--vitrine);display:flex;align-items:flex-end;padding:18px 18px 16px 34px;overflow:hidden}
 .card .vitrine::before{content:"";position:absolute;left:18px;top:0;bottom:0;width:2px;background:var(--laranja);z-index:1}
-.card .vitrine img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:var(--espuma)}
-.card .medida{position:relative;font-family:'Oswald';font-weight:700;font-size:clamp(56px,7vw,78px);line-height:.9;color:var(--laranja)}
+.card .vitrine img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:var(--vitrine)}
+.card .medida{position:relative;font-family:'Oswald';font-weight:700;font-size:clamp(40px,4.6vw,62px);line-height:.9;color:var(--preto);overflow-wrap:anywhere}
 .card .vitrine .tag{position:absolute;top:16px;left:34px;z-index:2}
 .card .preco small{font-family:'Barlow',sans-serif;font-size:14px;color:var(--po);text-transform:none;letter-spacing:0}
 .busca{margin-top:16px;width:100%;max-width:420px;background:transparent;border:1px solid var(--linha);color:inherit;padding:12px 14px;font:inherit;font-size:16px;border-radius:0}
@@ -204,7 +205,6 @@ body.areia{color-scheme:light;--areia:#EADFCB;--areia2:#E0D2BA;--cartao:#F5F2EC;
 .areia .pagina h3[style]{color:var(--brasa)!important}
 .areia .atalhos button{border-color:var(--borda);color:var(--preto)}
 .areia .atalhos button:hover,.areia .atalhos button.ativo{border-color:var(--brasa);color:var(--brasa)}
-.areia .card .vitrine{background:var(--areia2)}
 .areia .card .medida{color:var(--preto)}
 .areia .card .cat{color:#7A756B}
 .areia .card .preco{color:var(--preto)}
